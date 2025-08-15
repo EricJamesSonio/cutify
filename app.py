@@ -3,8 +3,12 @@ from flask_cors import CORS
 import json
 import random
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="home")
 CORS(app)
+
+@app.route("/")
+def home():
+    return render_template("home.html")
 
 # Load responses from JSON file
 def load_responses():
