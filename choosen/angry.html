@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Why are you Angry? 😠</title>
-    <link rel="stylesheet" href="angry.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='angry.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -43,7 +43,7 @@
 
     <script>
         function goBack() {
-            window.location.href = '../choices/choices.html';
+            window.location.href = "{{ url_for('choices') }}";
         }
         
         function visitMe() {
@@ -52,9 +52,8 @@
                 localStorage.setItem('moodMessage', reason);
                 localStorage.setItem('currentMood', 'angry');
             }
-            // Always set previousPage so back button works
             localStorage.setItem('previousPage', 'angry');
-            window.location.href = '../me/visit.html';
+            window.location.href = "{{ url_for('visit') }}";
         }
         
         function sendMessage() {
@@ -63,9 +62,9 @@
                 localStorage.setItem('moodMessage', reason);
                 localStorage.setItem('currentMood', 'angry');
                 localStorage.setItem('previousPage', 'angry');
-                window.location.href = '../me/visit.html';
+                window.location.href = "{{ url_for('visit') }}";
             } else {
-                alert('Please tell me what\'s making you feel angry first.');
+                alert("Please tell me what's making you feel angry first.");
             }
         }
     </script>

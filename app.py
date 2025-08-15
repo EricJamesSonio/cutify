@@ -1,15 +1,64 @@
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
-import json
-import random
+from jinja2 import ChoiceLoader, FileSystemLoader
+import json, random, os
 
-app = Flask(__name__, template_folder="home")
+# Serve static files from the root folder
+app = Flask(__name__, static_folder='.', static_url_path='')
 CORS(app)
 
+# Set up multiple template folders
+app.jinja_loader = ChoiceLoader([
+    FileSystemLoader('home'),
+    FileSystemLoader('choices'),
+    FileSystemLoader('choosen'),
+    FileSystemLoader('me')
+])
+
+# Routes for HTML pages
 @app.route("/")
 def home():
     return render_template("home.html")
 
+@app.route("/choices")
+def choices():
+    return render_template("choices.html")
+
+@app.route("/sadpage")
+def sad():
+    return render_template("sad.html")
+
+@app.route("/happypage")
+def happy():
+    return render_template("happy.html")
+
+@app.route("/missingpage")
+def missing():
+    return render_template("missing.html")
+
+@app.route("/angrypage")
+def angry():
+    return render_template("angry.html")
+
+@app.route("/confusedpage")
+def confused():
+    return render_template("confused.html")
+
+@app.route("/hurtpage")
+def hurt():
+    return render_template("hurt.html")
+
+@app.route("/finepage")
+def fine():
+    return render_template("fine.html")
+
+@app.route("/me")
+def me():
+    return render_template("me.html")
+
+@app.route("/visit")
+def visit():
+    return render_template("visit.html")
 # Load responses from JSON file
 def load_responses():
     try:

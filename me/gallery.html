@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Our Gallery 📸</title>
-    <link rel="stylesheet" href="gallery.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/gallery.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
 </head>
 <body>
     <div class="gallery-container">
@@ -18,7 +18,7 @@
         <div class="albums-grid">
             <div class="album-card" onclick="openAlbum('firstdate')">
                 <div class="album-cover">
-                    <img src="images/g1.jfif" alt="First Date" class="cover-image">
+                    <img src="/static/images/g1.jfif" alt="First Date" class="cover-image" />
                     <div class="album-overlay">
                         <div class="album-icon">💕</div>
                         <h3>First Date</h3>
@@ -30,7 +30,7 @@
 
             <div class="album-card" onclick="openAlbum('walter')">
                 <div class="album-cover">
-                    <img src="images/f1.jfif" alt="Walter Date" class="cover-image">
+                    <img src="/static/images/f1.jfif" alt="Walter Date" class="cover-image" />
                     <div class="album-overlay">
                         <div class="album-icon">🌟</div>
                         <h3>Walter Date</h3>
@@ -42,7 +42,7 @@
 
             <div class="album-card" onclick="openAlbum('tricia')">
                 <div class="album-cover">
-                    <img src="images/h1.jfif" alt="Tricia's Debut" class="cover-image">
+                    <img src="/static/images/h1.jfif" alt="Tricia's Debut" class="cover-image" />
                     <div class="album-overlay">
                         <div class="album-icon">✨</div>
                         <h3>Tricia's Debut</h3>
@@ -54,7 +54,7 @@
 
             <div class="album-card" onclick="openAlbum('lastpicture')">
                 <div class="album-cover">
-                    <img src="images/l1.jfif" alt="Last Picture" class="cover-image">
+                    <img src="/static/images/l1.jfif" alt="Last Picture" class="cover-image" />
                     <div class="album-overlay">
                         <div class="album-icon">💫</div>
                         <h3>Last Picture</h3>
@@ -88,7 +88,7 @@
             <div class="viewer-content">
                 <button class="close-viewer" onclick="closeImageViewer()">&times;</button>
                 <button class="nav-arrow prev-arrow" onclick="previousImage()">‹</button>
-                <img id="fullImage" src="" alt="Full size image">
+                <img id="fullImage" src="" alt="Full size image" />
                 <button class="nav-arrow next-arrow" onclick="nextImage()">›</button>
                 <div class="image-info">
                     <span id="imageCounter">1 / 1</span>
@@ -99,7 +99,7 @@
         <!-- Navigation -->
         <div class="navigation">
             <button class="nav-button back-btn" onclick="goBack()">← Back to Chat</button>
-            <button class="nav-button visit-btn" onclick="window.location.href='visit.html'">Visit Room 💙</button>
+            <button class="nav-button visit-btn" onclick="window.location.href='/visit'">Visit Room 💙</button>
         </div>
 
         <!-- Floating Hearts -->
@@ -113,53 +113,34 @@
     </div>
 
     <script>
-        // Album configurations
         const albums = {
-            firstdate: {
-                name: "First Date - February 14",
-                prefix: "g",
-                icon: "💕"
-            },
-            walter: {
-                name: "Walter Date",
-                prefix: "f",
-                icon: "🌟"
-            },
-            tricia: {
-                name: "Tricia's Debut",
-                prefix: "h",
-                icon: "✨"
-            },
-            lastpicture: {
-                name: "Last Picture",
-                prefix: "l",
-                icon: "💫"
-            }
+            firstdate: { name: "First Date - February 14", prefix: "g", icon: "💕" },
+            walter: { name: "Walter Date", prefix: "f", icon: "🌟" },
+            tricia: { name: "Tricia's Debut", prefix: "h", icon: "✨" },
+            lastpicture: { name: "Last Picture", prefix: "l", icon: "💫" }
         };
 
         let currentAlbum = '';
         let currentImages = [];
         let currentImageIndex = 0;
 
-        // Load photo counts for each album
         function loadPhotoCounts() {
             Object.keys(albums).forEach(albumKey => {
                 const album = albums[albumKey];
                 let count = 0;
-                
-                // Try to load images to count them
+
                 for (let i = 1; i <= 20; i++) {
                     const img = new Image();
-                    img.onload = function() {
+                    img.onload = function () {
                         count++;
                         document.getElementById(`${albumKey}-count`).textContent = `${count} photos`;
                     };
-                    img.onerror = function() {
+                    img.onerror = function () {
                         if (count === 0 && i === 1) {
                             document.getElementById(`${albumKey}-count`).textContent = 'No photos';
                         }
                     };
-                    img.src = `images/${album.prefix}${i}.jfif`;
+                    img.src = `/static/images/${album.prefix}${i}.jfif`;
                 }
             });
         }
@@ -168,44 +149,41 @@
             currentAlbum = albumKey;
             const album = albums[albumKey];
             currentImages = [];
-            
+
             document.getElementById('albumTitle').textContent = album.name;
             document.getElementById('photoModal').style.display = 'flex';
-            
+
             const photoGrid = document.getElementById('photoGrid');
             photoGrid.innerHTML = '<div class="loading">Loading photos...</div>';
-            
-            // Load all images for this album
+
             let loadedCount = 0;
             const maxImages = 20;
-            
+
             for (let i = 1; i <= maxImages; i++) {
                 const img = new Image();
-                img.onload = function() {
-                    const imagePath = `images/${album.prefix}${i}.jfif`;
+                img.onload = function () {
+                    const imagePath = `/static/images/${album.prefix}${i}.jfif`;
                     currentImages.push(imagePath);
-                    
+
                     if (loadedCount === 0) {
                         photoGrid.innerHTML = '';
                     }
-                    
+
                     const photoItem = document.createElement('div');
                     photoItem.className = 'photo-item';
                     photoItem.innerHTML = `
-                        <img src="${imagePath}" alt="${album.name} ${i}" onclick="openImageViewer(${currentImages.length - 1})">
-                        <div class="photo-overlay">
-                            <span>${album.prefix}${i}</span>
-                        </div>
+                        <img src="${imagePath}" alt="${album.name} ${i}" onclick="openImageViewer(${currentImages.length - 1})" />
+                        <div class="photo-overlay"><span>${album.prefix}${i}</span></div>
                     `;
                     photoGrid.appendChild(photoItem);
                     loadedCount++;
                 };
-                img.onerror = function() {
+                img.onerror = function () {
                     if (loadedCount === 0 && i === maxImages) {
                         photoGrid.innerHTML = '<div class="no-photos">No photos found in this album</div>';
                     }
                 };
-                img.src = `images/${album.prefix}${i}.jfif`;
+                img.src = `/static/images/${album.prefix}${i}.jfif`;
             }
         }
 
@@ -243,21 +221,17 @@
         }
 
         function updateImageCounter() {
-            document.getElementById('imageCounter').textContent = 
+            document.getElementById('imageCounter').textContent =
                 `${currentImageIndex + 1} / ${currentImages.length}`;
         }
 
         function goBack() {
-            window.location.href = 'me.html';
+            window.location.href = '/me';
         }
 
-        // Initialize
-        window.addEventListener('load', function() {
-            loadPhotoCounts();
-        });
+        window.addEventListener('load', () => loadPhotoCounts());
 
-        // Keyboard navigation
-        document.addEventListener('keydown', function(e) {
+        document.addEventListener('keydown', (e) => {
             if (document.getElementById('imageViewer').style.display === 'flex') {
                 if (e.key === 'ArrowLeft') previousImage();
                 if (e.key === 'ArrowRight') nextImage();

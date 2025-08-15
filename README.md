@@ -67,6 +67,8 @@ gf/
 ├── me/
 │   ├── me.html            # Chat/messaging page
 │   └── me.css             # Chat page styling
+│   └── visit.html             # Room pov styling
+│   └── visit.css             #  styling
 ├── images/
 │   ├── me.jpg             # Profile picture
 │   └── kiss.gif           # Cute animation

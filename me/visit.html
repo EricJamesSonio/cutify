@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Visit EJ's Room 💙</title>
-    <link rel="stylesheet" href="visit.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="visit.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
 </head>
 <body>
     <div class="room-container">
@@ -85,7 +85,7 @@
 
             <!-- EJ in the room -->
             <div class="ej-character">
-                <img src="../images/me.jpg" alt="EJ" class="ej-photo">
+                <img src="images/me.jpg" alt="EJ" class="ej-photo" />
                 <div class="speech-bubble">
                     <p>Hey babe! Welcome to my room! 💙</p>
                     <div class="bubble-tail"></div>
@@ -101,26 +101,26 @@
                 <p>Relax and get comfy</p>
                 <button class="action-btn" onclick="sitOnBed()">Sit</button>
             </div>
-            
+
             <div class="action-card">
                 <div class="action-icon">💬</div>
                 <h3>Start Chat</h3>
                 <p>Talk with EJ</p>
                 <button class="action-btn" onclick="startChat()">Chat</button>
             </div>
-            
+
             <div class="action-card">
                 <div class="action-icon">🎵</div>
                 <h3>Play Music</h3>
                 <p>Choose a song to play</p>
                 <div class="music-options">
-                    <button class="music-btn" onclick="playMusic('sofiathefirst.mp3.mp3')">Sofia the First</button>
-                    <button class="music-btn" onclick="playMusic('purplebarbie.mp3.mp3')">Purple Barbie</button>
-                    <button class="music-btn" onclick="playMusic('givemeyourforever.mp3.mp3')">Our Song 💙</button>
+                    <button class="music-btn" onclick="playMusic('sofiathefirst.mp3')">Sofia the First</button>
+                    <button class="music-btn" onclick="playMusic('purplebarbie.mp3')">Purple Barbie</button>
+                    <button class="music-btn" onclick="playMusic('givemeyourforever.mp3')">Our Song 💙</button>
                 </div>
                 <button class="action-btn stop-music" onclick="stopMusic()" style="display: none;">Stop Music</button>
             </div>
-            
+
             <div class="action-card">
                 <div class="action-icon">📸</div>
                 <h3>View Gallery</h3>
@@ -146,7 +146,7 @@
                 <span>← Back</span>
             </button>
         </div>
-        
+
         <!-- Floating hearts -->
         <div class="floating-hearts">
             <div class="heart">💙</div>
@@ -155,7 +155,7 @@
             <div class="heart">💙</div>
             <div class="heart">✨</div>
         </div>
-        
+
         <!-- Welcome message overlay -->
         <div class="welcome-overlay" id="welcomeOverlay">
             <div class="welcome-content">
@@ -168,24 +168,25 @@
 
     <script>
         // Show welcome message on load
-        window.onload = function() {
+        window.onload = function () {
             setTimeout(() => {
                 document.getElementById('welcomeOverlay').style.display = 'flex';
             }, 500);
         };
-        
+
         function closeWelcome() {
             document.getElementById('welcomeOverlay').style.display = 'none';
         }
-        
+
         function sitOnBed() {
             showMessage("Come here, babe! Let's cuddle on the bed together 💙", "bed");
         }
-        
+
         function startChat() {
+            // Redirect relative to current URL
             window.location.href = 'me.html';
         }
-        
+
         let musicPlaying = false;
         let audio = null;
         let currentSong = '';
@@ -195,25 +196,26 @@
             if (musicPlaying) {
                 stopMusic();
             }
-            
+
             audio = new Audio(`music/${songFile}`);
             audio.loop = true;
-            audio.play().then(() => {
-                musicPlaying = true;
-                currentSong = songFile;
-                
-                // Update UI
-                document.querySelector('.action-card:nth-child(3) p').textContent = `Playing: ${getSongDisplayName(songFile)}`;
-                document.querySelector('.stop-music').style.display = 'block';
-                
-                // Hide song selection buttons
-                const musicOptions = document.querySelector('.music-options');
-                musicOptions.style.display = 'none';
-                
-            }).catch(error => {
-                console.log('Could not play music:', error);
-                alert(`Music file not found: ${songFile}. Please check the me/music/ folder.`);
-            });
+            audio.play()
+                .then(() => {
+                    musicPlaying = true;
+                    currentSong = songFile;
+
+                    // Update UI
+                    document.querySelector('.action-card:nth-child(3) p').textContent = `Playing: ${getSongDisplayName(songFile)}`;
+                    document.querySelector('.stop-music').style.display = 'block';
+
+                    // Hide song selection buttons
+                    const musicOptions = document.querySelector('.music-options');
+                    musicOptions.style.display = 'none';
+                })
+                .catch((error) => {
+                    console.log('Could not play music:', error);
+                    alert(`Music file not found: ${songFile}. Please check the me/music/ folder.`);
+                });
         }
 
         function stopMusic() {
@@ -223,46 +225,50 @@
             }
             musicPlaying = false;
             currentSong = '';
-            
+
             // Update UI
             document.querySelector('.action-card:nth-child(3) p').textContent = 'Choose a song to play';
             document.querySelector('.stop-music').style.display = 'none';
-            
+
             // Show song selection buttons
             const musicOptions = document.querySelector('.music-options');
             musicOptions.style.display = 'flex';
         }
 
         function getSongDisplayName(songFile) {
-            switch(songFile) {
-                case 'sofiathefirst.mp3.mp3': return 'Sofia the First';
-                case 'purplebarbie.mp3.mp3': return 'Purple Barbie';
-                case 'givemeyourforever.mp3.mp3': return 'Our Song 💙';
-                default: return 'Unknown Song';
+            switch (songFile) {
+                case 'sofiathefirst.mp3':
+                    return 'Sofia the First';
+                case 'purplebarbie.mp3':
+                    return 'Purple Barbie';
+                case 'givemeyourforever.mp3':
+                    return 'Our Song 💙';
+                default:
+                    return 'Unknown Song';
             }
         }
-        
+
         function showMessage(message, type) {
             const bubble = document.querySelector('.speech-bubble p');
             const originalMessage = bubble.textContent;
-            
+
             bubble.textContent = message;
-            
+
             // Add special effects based on type
             if (type === 'bed') {
                 document.querySelector('.bed').classList.add('highlight');
             } else if (type === 'music') {
                 document.querySelector('.desk').classList.add('highlight');
             }
-            
+
             setTimeout(() => {
                 bubble.textContent = originalMessage;
-                document.querySelectorAll('.highlight').forEach(el => {
+                document.querySelectorAll('.highlight').forEach((el) => {
                     el.classList.remove('highlight');
                 });
             }, 3000);
         }
-        
+
         function goBack() {
             const previousPage = localStorage.getItem('previousPage');
             if (previousPage) {
@@ -271,18 +277,18 @@
                 window.location.href = '../choices/choices.html';
             }
         }
-        
+
         function openGallery() {
             window.location.href = 'gallery.html';
         }
-        
+
         function closeMessage() {
             document.getElementById('messageContainer').style.display = 'none';
         }
 
         // Load responses and handle mood messages
         let responses = {};
-        
+
         async function loadResponses() {
             try {
                 const response = await fetch('../responses.json');
@@ -293,12 +299,12 @@
         }
 
         // Check for mood message on page load
-        window.addEventListener('load', async function() {
+        window.addEventListener('load', async function () {
             await loadResponses();
-            
+
             const moodMessage = localStorage.getItem('moodMessage');
             const currentMood = localStorage.getItem('currentMood');
-            
+
             if (moodMessage && currentMood) {
                 displayMoodResponse(moodMessage, currentMood);
                 // Clear the message after displaying
@@ -309,50 +315,59 @@
         function displayMoodResponse(message, mood) {
             const messageContainer = document.getElementById('messageContainer');
             const messageContent = document.getElementById('messageContent');
-            
+
             // Get mood-specific responses
             const moodData = responses.moodResponses && responses.moodResponses[mood];
-            
+
             let acknowledgment = "I received your message baby.";
             let botResponse = "Thank you for sharing that with me love.";
-            
+
             if (moodData) {
                 acknowledgment = moodData.acknowledgment;
                 const possibleResponses = moodData.responses;
                 botResponse = possibleResponses[Math.floor(Math.random() * possibleResponses.length)];
             }
-            
+
             // Create message display
             messageContent.innerHTML = `
                 <div class="user-message">
                     <div class="message-bubble user-bubble">
                         <p><strong>Your ${mood} message:</strong></p>
                         <p>"${message}"</p>
-                        <span class="timestamp">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                        <span class="timestamp">${new Date().toLocaleTimeString([], {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                        })}</span>
                     </div>
                 </div>
                 <div class="bot-message">
                     <div class="message-bubble bot-bubble">
                         <p>${acknowledgment}</p>
-                        <span class="timestamp">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                        <span class="timestamp">${new Date().toLocaleTimeString([], {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                        })}</span>
                     </div>
                 </div>
                 <div class="bot-message">
                     <div class="message-bubble bot-bubble">
                         <p>${botResponse}</p>
-                        <span class="timestamp">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                        <span class="timestamp">${new Date().toLocaleTimeString([], {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                        })}</span>
                     </div>
                 </div>
             `;
-            
+
             // Show the message container
             messageContainer.style.display = 'block';
-            
+
             // Update speech bubble
             const speechBubble = document.querySelector('.speech-bubble p');
             if (speechBubble) {
                 speechBubble.textContent = acknowledgment;
-                
+
                 // Change back after 5 seconds
                 setTimeout(() => {
                     speechBubble.textContent = "Hi babe! Welcome to my room 💙";
