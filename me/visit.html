@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visit EJ's Room 💙</title>
+    <link rel="stylesheet" href="visit.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="room-container">
+        <div class="room-background">
+            <!-- Window -->
+            <div class="window">
+                <div class="window-frame">
+                    <div class="window-pane"></div>
+                    <div class="window-cross-h"></div>
+                    <div class="window-cross-v"></div>
+                </div>
+                <div class="curtains">
+                    <div class="curtain-left"></div>
+                    <div class="curtain-right"></div>
+                </div>
+            </div>
+
+            <!-- Bed -->
+            <div class="bed">
+                <div class="bed-frame"></div>
+                <div class="blanket"></div>
+                <div class="pillow"></div>
+            </div>
+
+            <!-- Desk with Laptop -->
+            <div class="desk">
+                <div class="desk-surface"></div>
+                <div class="desk-legs"></div>
+                <div class="laptop"></div>
+                <div class="laptop-screen"></div>
+            </div>
+
+            <!-- Guitar Stand -->
+            <div class="guitar-stand">
+                <div class="guitar-acoustic">
+                    <div class="guitar-body"></div>
+                    <div class="guitar-neck"></div>
+                    <div class="guitar-strings"></div>
+                </div>
+                <div class="guitar-electric">
+                    <div class="guitar-body-electric"></div>
+                    <div class="guitar-neck-electric"></div>
+                </div>
+            </div>
+
+            <!-- Wardrobe -->
+            <div class="wardrobe">
+                <div class="wardrobe-body"></div>
+                <div class="wardrobe-doors"></div>
+                <div class="wardrobe-handles"></div>
+                <div class="clothes-hanging">
+                    <div class="shirt"></div>
+                    <div class="jacket"></div>
+                    <div class="pants"></div>
+                </div>
+            </div>
+
+            <!-- Bookshelf -->
+            <div class="bookshelf">
+                <div class="shelf-frame"></div>
+                <div class="books">
+                    <div class="book book1"></div>
+                    <div class="book book2"></div>
+                    <div class="book book3"></div>
+                    <div class="book book4"></div>
+                </div>
+            </div>
+
+            <!-- Floor Items -->
+            <div class="floor-items">
+                <div class="shoes">
+                    <div class="shoe-left"></div>
+                    <div class="shoe-right"></div>
+                </div>
+                <div class="backpack"></div>
+            </div>
+
+            <!-- EJ in the room -->
+            <div class="ej-character">
+                <img src="../images/me.jpg" alt="EJ" class="ej-photo">
+                <div class="speech-bubble">
+                    <p>Hey babe! Welcome to my room! 💙</p>
+                    <div class="bubble-tail"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Room Actions -->
+        <div class="room-actions">
+            <div class="action-card">
+                <div class="action-icon">🛏️</div>
+                <h3>Sit on Bed</h3>
+                <p>Relax and get comfy</p>
+                <button class="action-btn" onclick="sitOnBed()">Sit</button>
+            </div>
+            
+            <div class="action-card">
+                <div class="action-icon">💬</div>
+                <h3>Start Chat</h3>
+                <p>Talk with EJ</p>
+                <button class="action-btn" onclick="startChat()">Chat</button>
+            </div>
+            
+            <div class="action-card">
+                <div class="action-icon">🎵</div>
+                <h3>Play Music</h3>
+                <p>Choose a song to play</p>
+                <div class="music-options">
+                    <button class="music-btn" onclick="playMusic('sofiathefirst.mp3.mp3')">Sofia the First</button>
+                    <button class="music-btn" onclick="playMusic('purplebarbie.mp3.mp3')">Purple Barbie</button>
+                    <button class="music-btn" onclick="playMusic('givemeyourforever.mp3.mp3')">Our Song 💙</button>
+                </div>
+                <button class="action-btn stop-music" onclick="stopMusic()" style="display: none;">Stop Music</button>
+            </div>
+            
+            <div class="action-card">
+                <div class="action-icon">📸</div>
+                <h3>View Gallery</h3>
+                <p>Our beautiful memories</p>
+                <button class="action-btn" onclick="openGallery()">View Photos</button>
+            </div>
+        </div>
+
+        <!-- Message Container -->
+        <div class="message-container" id="messageContainer" style="display: none;">
+            <div class="message-header">
+                <h3>💌 Message from You</h3>
+                <button class="close-message" onclick="closeMessage()">×</button>
+            </div>
+            <div class="message-content" id="messageContent">
+                <!-- Messages will be displayed here -->
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation">
+            <button class="nav-button back-btn" onclick="goBack()">
+                <span>← Back</span>
+            </button>
+        </div>
+        
+        <!-- Floating hearts -->
+        <div class="floating-hearts">
+            <div class="heart">💙</div>
+            <div class="heart">💕</div>
+            <div class="heart">💖</div>
+            <div class="heart">💙</div>
+            <div class="heart">✨</div>
+        </div>
+        
+        <!-- Welcome message overlay -->
+        <div class="welcome-overlay" id="welcomeOverlay">
+            <div class="welcome-content">
+                <h2>Welcome to my room, beautiful! 💙</h2>
+                <p>I'm so happy you're here with me. What would you like to do together?</p>
+                <button class="close-welcome" onclick="closeWelcome()">Let's explore! ✨</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Show welcome message on load
+        window.onload = function() {
+            setTimeout(() => {
+                document.getElementById('welcomeOverlay').style.display = 'flex';
+            }, 500);
+        };
+        
+        function closeWelcome() {
+            document.getElementById('welcomeOverlay').style.display = 'none';
+        }
+        
+        function sitOnBed() {
+            showMessage("Come here, babe! Let's cuddle on the bed together 💙", "bed");
+        }
+        
+        function startChat() {
+            window.location.href = 'me.html';
+        }
+        
+        let musicPlaying = false;
+        let audio = null;
+        let currentSong = '';
+
+        function playMusic(songFile) {
+            // Stop current music if playing
+            if (musicPlaying) {
+                stopMusic();
+            }
+            
+            audio = new Audio(`music/${songFile}`);
+            audio.loop = true;
+            audio.play().then(() => {
+                musicPlaying = true;
+                currentSong = songFile;
+                
+                // Update UI
+                document.querySelector('.action-card:nth-child(3) p').textContent = `Playing: ${getSongDisplayName(songFile)}`;
+                document.querySelector('.stop-music').style.display = 'block';
+                
+                // Hide song selection buttons
+                const musicOptions = document.querySelector('.music-options');
+                musicOptions.style.display = 'none';
+                
+            }).catch(error => {
+                console.log('Could not play music:', error);
+                alert(`Music file not found: ${songFile}. Please check the me/music/ folder.`);
+            });
+        }
+
+        function stopMusic() {
+            if (audio) {
+                audio.pause();
+                audio = null;
+            }
+            musicPlaying = false;
+            currentSong = '';
+            
+            // Update UI
+            document.querySelector('.action-card:nth-child(3) p').textContent = 'Choose a song to play';
+            document.querySelector('.stop-music').style.display = 'none';
+            
+            // Show song selection buttons
+            const musicOptions = document.querySelector('.music-options');
+            musicOptions.style.display = 'flex';
+        }
+
+        function getSongDisplayName(songFile) {
+            switch(songFile) {
+                case 'sofiathefirst.mp3.mp3': return 'Sofia the First';
+                case 'purplebarbie.mp3.mp3': return 'Purple Barbie';
+                case 'givemeyourforever.mp3.mp3': return 'Our Song 💙';
+                default: return 'Unknown Song';
+            }
+        }
+        
+        function showMessage(message, type) {
+            const bubble = document.querySelector('.speech-bubble p');
+            const originalMessage = bubble.textContent;
+            
+            bubble.textContent = message;
+            
+            // Add special effects based on type
+            if (type === 'bed') {
+                document.querySelector('.bed').classList.add('highlight');
+            } else if (type === 'music') {
+                document.querySelector('.desk').classList.add('highlight');
+            }
+            
+            setTimeout(() => {
+                bubble.textContent = originalMessage;
+                document.querySelectorAll('.highlight').forEach(el => {
+                    el.classList.remove('highlight');
+                });
+            }, 3000);
+        }
+        
+        function goBack() {
+            const previousPage = localStorage.getItem('previousPage');
+            if (previousPage) {
+                window.location.href = `../choosen/${previousPage}.html`;
+            } else {
+                window.location.href = '../choices/choices.html';
+            }
+        }
+        
+        function openGallery() {
+            window.location.href = 'gallery.html';
+        }
+        
+        function closeMessage() {
+            document.getElementById('messageContainer').style.display = 'none';
+        }
+
+        // Load responses and handle mood messages
+        let responses = {};
+        
+        async function loadResponses() {
+            try {
+                const response = await fetch('../responses.json');
+                responses = await response.json();
+            } catch (error) {
+                console.error('Error loading responses:', error);
+            }
+        }
+
+        // Check for mood message on page load
+        window.addEventListener('load', async function() {
+            await loadResponses();
+            
+            const moodMessage = localStorage.getItem('moodMessage');
+            const currentMood = localStorage.getItem('currentMood');
+            
+            if (moodMessage && currentMood) {
+                displayMoodResponse(moodMessage, currentMood);
+                // Clear the message after displaying
+                localStorage.removeItem('moodMessage');
+            }
+        });
+
+        function displayMoodResponse(message, mood) {
+            const messageContainer = document.getElementById('messageContainer');
+            const messageContent = document.getElementById('messageContent');
+            
+            // Get mood-specific responses
+            const moodData = responses.moodResponses && responses.moodResponses[mood];
+            
+            let acknowledgment = "I received your message baby.";
+            let botResponse = "Thank you for sharing that with me love.";
+            
+            if (moodData) {
+                acknowledgment = moodData.acknowledgment;
+                const possibleResponses = moodData.responses;
+                botResponse = possibleResponses[Math.floor(Math.random() * possibleResponses.length)];
+            }
+            
+            // Create message display
+            messageContent.innerHTML = `
+                <div class="user-message">
+                    <div class="message-bubble user-bubble">
+                        <p><strong>Your ${mood} message:</strong></p>
+                        <p>"${message}"</p>
+                        <span class="timestamp">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                    </div>
+                </div>
+                <div class="bot-message">
+                    <div class="message-bubble bot-bubble">
+                        <p>${acknowledgment}</p>
+                        <span class="timestamp">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                    </div>
+                </div>
+                <div class="bot-message">
+                    <div class="message-bubble bot-bubble">
+                        <p>${botResponse}</p>
+                        <span class="timestamp">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                    </div>
+                </div>
+            `;
+            
+            // Show the message container
+            messageContainer.style.display = 'block';
+            
+            // Update speech bubble
+            const speechBubble = document.querySelector('.speech-bubble p');
+            if (speechBubble) {
+                speechBubble.textContent = acknowledgment;
+                
+                // Change back after 5 seconds
+                setTimeout(() => {
+                    speechBubble.textContent = "Hi babe! Welcome to my room 💙";
+                }, 5000);
+            }
+        }
+    </script>
+</body>
+</html>

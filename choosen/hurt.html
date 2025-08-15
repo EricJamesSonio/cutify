@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why are you Hurt? 💔</title>
+    <link rel="stylesheet" href="hurt.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="mood-card">
+            <div class="mood-emoji">💔</div>
+            <h1 class="mood-title">Why are you Hurt?</h1>
+            <div class="comfort-message">I'm here for you, my love 💖</div>
+            
+            <div class="input-container">
+                <textarea 
+                    id="reasonInput" 
+                    placeholder="Tell me what's hurting you..."
+                    rows="4"
+                ></textarea>
+            </div>
+            
+            <div class="button-container">
+                <button class="action-button back-btn" onclick="goBack()">
+                    <span>← Back</span>
+                </button>
+                <button class="action-button send-btn" onclick="sendMessage()">
+                    <span>Send Message 💌</span>
+                </button>
+                <button type="button" class="nav-button visit-btn" onclick="visitMe()">Visit Me 💙</button>
+            </div>
+        </div>
+        
+        <div class="floating-elements">
+            <div class="float-emoji">💖</div>
+            <div class="float-emoji">💔</div>
+            <div class="float-emoji">🌸</div>
+            <div class="float-emoji">💗</div>
+        </div>
+    </div>
+
+    <script>
+        function goBack() {
+            window.location.href = '../choices/choices.html';
+        }
+        
+        function visitMe() {
+            const reason = document.getElementById('reasonInput').value;
+            if (reason.trim()) {
+                localStorage.setItem('moodMessage', reason);
+                localStorage.setItem('currentMood', 'hurt');
+            }
+            // Always set previousPage so back button works
+            localStorage.setItem('previousPage', 'hurt');
+            window.location.href = '../me/visit.html';
+        }
+        
+        function sendMessage() {
+            const reason = document.getElementById('reasonInput').value;
+            if (reason.trim()) {
+                localStorage.setItem('moodMessage', reason);
+                localStorage.setItem('currentMood', 'hurt');
+                localStorage.setItem('previousPage', 'hurt');
+                window.location.href = '../me/visit.html';
+            } else {
+                alert('Please tell me what\'s hurting you first.');
+            }
+        }
+    </script>
+</body>
+</html>

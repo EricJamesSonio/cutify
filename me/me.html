@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat with EJ 💙</title>
+    <link rel="stylesheet" href="me.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="chat-header">
+            <div class="profile-section">
+                <img src="../images/me.jpg" alt="EJ" class="profile-image">
+                <div class="profile-info">
+                    <h2>EJ - Your Boyfriend 💙</h2>
+                    <p class="status">Always here for you</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="messages-container" id="messagesContainer">
+            <div class="welcome-message">
+                <div class="message bot-message">
+                    <div class="message-content">
+                        <p>Hi Babe! How are you? what brings you here</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="input-section">
+            <div class="input-container">
+                <textarea 
+                    id="messageInput" 
+                    placeholder="Type your message here..."
+                    rows="2"
+                ></textarea>
+                <button class="send-button" onclick="sendMessage()">
+                    <span>Send 💌</span>
+                </button>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="action-button back-btn" onclick="goBack()">
+                    <span>← Back</span>
+                </button>
+                <button class="action-button" onclick="window.location.href='../choices/choices.html'">
+                    <span>← Back to Choices</span>
+                </button>
+            </div>
+        </div>
+        <div class="floating-hearts">
+            <div class="heart">💙</div>
+            <div class="heart">💕</div>
+            <div class="heart">💖</div>
+            <div class="heart">💙</div>
+        </div>
+    </div>
+
+    <script>
+        // Advanced text preprocessing with better normalization
+        function preprocessText(text) {
+            return text
+                .toLowerCase()
+                .replace(/[^\w\s]/g, ' ') // Replace punctuation with spaces
+                .replace(/\s+/g, ' ') // Normalize whitespace
+                .trim();
+        }
+
+        // Levenshtein distance algorithm for fuzzy matching
+        function levenshteinDistance(str1, str2) {
+            const matrix = [];
+            for (let i = 0; i <= str2.length; i++) {
+                matrix[i] = [i];
+            }
+            for (let j = 0; j <= str1.length; j++) {
+                matrix[0][j] = j;
+            }
+            for (let i = 1; i <= str2.length; i++) {
+                for (let j = 1; j <= str1.length; j++) {
+                    if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
+                        matrix[i][j] = matrix[i - 1][j - 1];
+                    } else {
+                        matrix[i][j] = Math.min(
+                            matrix[i - 1][j - 1] + 1,
+                            matrix[i][j - 1] + 1,
+                            matrix[i - 1][j] + 1
+                        );
+                    }
+                }
+            }
+            return matrix[str2.length][str1.length];
+        }
+
+        // Calculate basic similarity ratio
+        function similarity(str1, str2) {
+            const maxLen = Math.max(str1.length, str2.length);
+            if (maxLen === 0) return 1.0;
+            return (maxLen - levenshteinDistance(str1, str2)) / maxLen;
+        }
+
+        // Jaro-Winkler similarity for better typo handling
+        function jaroWinklerSimilarity(s1, s2) {
+            const jaro = jaroSimilarity(s1, s2);
+            if (jaro < 0.7) return jaro;
+            
+            let prefix = 0;
+            for (let i = 0; i < Math.min(s1.length, s2.length, 4); i++) {
+                if (s1[i] === s2[i]) prefix++;
+                else break;
+            }
+            return jaro + (0.1 * prefix * (1 - jaro));
+        }
+
+        function jaroSimilarity(s1, s2) {
+            if (s1 === s2) return 1.0;
+            
+            const len1 = s1.length;
+            const len2 = s2.length;
+            const matchWindow = Math.floor(Math.max(len1, len2) / 2) - 1;
+            
+            const s1Matches = new Array(len1).fill(false);
+            const s2Matches = new Array(len2).fill(false);
+            
+            let matches = 0;
+            let transpositions = 0;
+            
+            // Find matches
+            for (let i = 0; i < len1; i++) {
+                const start = Math.max(0, i - matchWindow);
+                const end = Math.min(i + matchWindow + 1, len2);
+                
+                for (let j = start; j < end; j++) {
+                    if (s2Matches[j] || s1[i] !== s2[j]) continue;
+                    s1Matches[i] = s2Matches[j] = true;
+                    matches++;
+                    break;
+                }
+            }
+            
+            if (matches === 0) return 0.0;
+            
+            // Find transpositions
+            let k = 0;
+            for (let i = 0; i < len1; i++) {
+                if (!s1Matches[i]) continue;
+                while (!s2Matches[k]) k++;
+                if (s1[i] !== s2[k]) transpositions++;
+                k++;
+            }
+            
+            return (matches / len1 + matches / len2 + (matches - transpositions / 2) / matches) / 3.0;
+        }
+
+        // N-gram similarity for partial matches
+        function ngramSimilarity(s1, s2, n = 2) {
+            const ngrams1 = getNgrams(s1, n);
+            const ngrams2 = getNgrams(s2, n);
+            
+            const intersection = ngrams1.filter(gram => ngrams2.includes(gram));
+            const union = [...new Set([...ngrams1, ...ngrams2])];
+            
+            return union.length === 0 ? 0 : intersection.length / union.length;
+        }
+
+        function getNgrams(str, n) {
+            const ngrams = [];
+            for (let i = 0; i <= str.length - n; i++) {
+                ngrams.push(str.substring(i, i + n));
+            }
+            return ngrams;
+        }
+
+        // Enhanced similarity calculation with multiple strategies
+        function calculateSimilarity(str1, str2) {
+            if (str1 === str2) return 1.0;
+            
+            const leven = similarity(str1, str2);
+            const jaro = jaroWinklerSimilarity(str1, str2);
+            const ngram = ngramSimilarity(str1, str2, 2);
+            
+            // Return the highest similarity score
+            return Math.max(leven, jaro, ngram);
+        }
+
+        // Improved findBestMatch with lower thresholds and better fallback
+        function findBestMatch(input, keywords) {
+            const threshold = 0.4; // Lowered threshold for better matching
+            let bestMatch = null;
+            let bestScore = 0;
+            
+            const processedInput = preprocessText(input);
+            const inputWords = processedInput.split(' ').filter(word => word.length > 0);
+            
+            // First check fallback keywords for common typos
+            if (responses.fallbackKeywords) {
+                for (const fallback in responses.fallbackKeywords) {
+                    const processedFallback = preprocessText(fallback);
+                    const fallbackScore = calculateSimilarity(processedInput, processedFallback);
+                    
+                    if (fallbackScore >= 0.6) {
+                        const targetKeyword = responses.fallbackKeywords[fallback];
+                        if (keywords[targetKeyword]) {
+                            return { match: targetKeyword, score: fallbackScore };
+                        }
+                    }
+                }
+            }
+            
+            for (const keyword in keywords) {
+                const processedKeyword = preprocessText(keyword);
+                const keywordWords = processedKeyword.split(' ').filter(word => word.length > 0);
+                
+                // Strategy 1: Exact match after preprocessing
+                if (processedInput === processedKeyword) {
+                    return { match: keyword, score: 1.0 };
+                }
+                
+                // Strategy 2: Contains check (bidirectional)
+                let containsScore = 0;
+                if (processedInput.includes(processedKeyword) || processedKeyword.includes(processedInput)) {
+                    containsScore = 0.9;
+                }
+                
+                // Strategy 3: Direct similarity
+                const directScore = calculateSimilarity(processedInput, processedKeyword);
+                
+                // Strategy 4: Word-by-word matching for multi-word inputs
+                let wordMatchScore = 0;
+                if (inputWords.length > 0 && keywordWords.length > 0) {
+                    let totalMatches = 0;
+                    for (const inputWord of inputWords) {
+                        let bestWordMatch = 0;
+                        for (const keywordWord of keywordWords) {
+                            const wordSim = calculateSimilarity(inputWord, keywordWord);
+                            bestWordMatch = Math.max(bestWordMatch, wordSim);
+                        }
+                        if (bestWordMatch > 0.5) totalMatches += bestWordMatch;
+                    }
+                    wordMatchScore = totalMatches / Math.max(inputWords.length, keywordWords.length);
+                }
+                
+                // Strategy 5: Partial matching - check if any input word matches keyword
+                let partialScore = 0;
+                for (const inputWord of inputWords) {
+                    const partialSim = calculateSimilarity(inputWord, processedKeyword);
+                    partialScore = Math.max(partialScore, partialSim);
+                }
+                
+                // Strategy 6: Substring matching for short inputs
+                let substringScore = 0;
+                if (processedInput.length <= 4 && processedKeyword.includes(processedInput)) {
+                    substringScore = 0.8;
+                }
+                
+                // Get the best score from all strategies
+                const finalScore = Math.max(
+                    containsScore,
+                    directScore,
+                    wordMatchScore,
+                    partialScore,
+                    substringScore
+                );
+                
+                console.log(`Keyword: "${keyword}" | Score: ${finalScore.toFixed(3)} | Strategies: contains=${containsScore.toFixed(3)}, direct=${directScore.toFixed(3)}, word=${wordMatchScore.toFixed(3)}, partial=${partialScore.toFixed(3)}, substring=${substringScore.toFixed(3)}`);
+                
+                if (finalScore >= threshold && finalScore > bestScore) {
+                    bestScore = finalScore;
+                    bestMatch = keyword;
+                }
+            }
+            
+            return { match: bestMatch, score: bestScore };
+        }
+
+        // Load responses from JSON
+        let responses = {};
+        
+        async function loadResponses() {
+            try {
+                const response = await fetch('../responses.json');
+                responses = await response.json();
+                console.log('Responses loaded:', responses); // Debug log
+            } catch (error) {
+                console.error('Error loading responses:', error);
+                responses = {
+                    keywords: {
+                        "iloveyou": ["ILOVEYOUUMORE BABY"],
+                        "imissyou": ["IMISSYOUUMOREEEEE BABE"],
+                        "sad": ["Aw, Wag kana masad jan baby. kiss kita e"],
+                        "kiss": ["Mwahhhhh!"],
+                        "busy": ["Sorry baby, Busy po sa schoolworks e."],
+                        "babe": ["Why po?"],
+                        "love": ["Yes love? why"],
+                        "ihh": ["whyy baby?"],
+                        "okay": ["Ano rereply kojan loveee"],
+                        "ok": ["Ano rereply kojan :<"]
+                    },
+                    default: ["Hi Babe! How are you? what brings you here", "Ano yan love? Tell me more"],
+                    fallbackKeywords: {
+                        "luv": "love",
+                        "lub": "love",
+                        "lov": "love",
+                        "lav": "love",
+                        "lve": "love",
+                        "heart": "love",
+                        "mahal": "love",
+                        "mis": "miss",
+                        "mss": "miss",
+                        "long": "miss",
+                        "namiss": "miss",
+                        "miss ka": "miss",
+                        "sads": "sad",
+                        "malungkot": "sad",
+                        "down": "sad",
+                        "upset": "sad",
+                        "cry": "sad",
+                        "hapi": "happy",
+                        "masaya": "happy",
+                        "glad": "happy",
+                        "joy": "happy",
+                        "smile": "happy",
+                        "kis": "kiss",
+                        "kss": "kiss",
+                        "mwah": "kiss",
+                        "halik": "kiss",
+                        "smooch": "kiss",
+                        "hag": "hug",
+                        "yakap": "hug",
+                        "embrace": "hug",
+                        "cuddle": "hug",
+                        "tulog": "sleep",
+                        "sleepy": "sleep",
+                        "tired": "sleep",
+                        "pagod": "sleep",
+                        "antok": "sleep",
+                        "gud": "good",
+                        "ok": "good",
+                        "fine": "good",
+                        "ayos": "good",
+                        "okay": "good",
+                        "bd": "bad",
+                        "not good": "bad",
+                        "hindi ok": "bad",
+                        "pangit": "bad",
+                        "ih": "ihh",
+                        "ihhh": "ihh",
+                        "ihhhh": "ihh",
+                        "oki": "okay",
+                        "okie": "okay",
+                        "okei": "okay"
+                    }
+                };
+            }
+        }
+
+        function getResponse(message) {
+            const { match, score } = findBestMatch(message, responses.keywords);
+            
+            // Debug logging
+            console.log(`Input: "${message}" | Best match: "${match}" | Score: ${score}`);
+            console.log('Available keywords:', Object.keys(responses.keywords));
+            
+            if (match && responses.keywords[match]) {
+                const possibleResponses = responses.keywords[match];
+                console.log(`Found responses for "${match}":`, possibleResponses);
+                return possibleResponses[Math.floor(Math.random() * possibleResponses.length)];
+            }
+            
+            // Default responses
+            const defaultResponses = responses.default || ["Hi Babe! How are you? what brings you here"];
+            console.log('Using default response');
+            return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (message === '') return;
+            
+            // Add user message
+            addMessage(message, 'user');
+            
+            // Clear input
+            input.value = '';
+            
+            // Get bot response with fuzzy matching
+            setTimeout(() => {
+                const botResponse = getResponse(message);
+                addMessage(botResponse, 'bot');
+            }, 500);
+        }
+
+        function addMessage(message, sender) {
+            const container = document.getElementById('messagesContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+            
+            messageDiv.innerHTML = `
+                <div class="message-content">
+                    <p>${message}</p>
+                    <span class="timestamp">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                </div>
+            `;
+            
+            container.appendChild(messageDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function goBack() {
+            const previousPage = localStorage.getItem('previousPage');
+            if (previousPage) {
+                window.location.href = `../choosen/${previousPage}.html`;
+            } else {
+                window.location.href = '../choices/choices.html';
+            }
+        }
+
+        // Handle Enter key
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Load responses when page loads
+        window.addEventListener('load', loadResponses);
+    </script>
+</body>
+</html>
