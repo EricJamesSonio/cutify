@@ -60,7 +60,11 @@
     "ej" : "Bakit Ryza?",
     "good": "Good naman pala! Happy ako",
     "work": "Work nanaman? Take care ka jan love",
-    "eat": "Kumain kana ba? Wag mo kalimutan ha"
+    "eat": "Kumain kana ba? Wag mo kalimutan ha",
+    "layo" : "Wala e, ganon talaga Royal Blood kakase e",
+    "mahal" : "Mahal na Mahal kita Babee, Sobra",
+    "ako paba" : "Oo naman, dipadin naman nagbabago babe, ikae padin",
+    "alis" : "Luh, aalis kana? balik ka ahh"
   },
   "fallbackKeywords": {
     "luv": "iloveyou",
