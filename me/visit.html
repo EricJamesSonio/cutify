@@ -282,36 +282,45 @@
         let musicPlaying = false;
         let audio = null;
         let currentSong = '';
+        const IN_SHELL = (function(){ try { return window.top !== window.self; } catch(e){ return true; } })();
 
         function playMusic(songFile) {
-            // Stop current music if playing
+            // Stop current if playing
             if (musicPlaying) {
                 stopMusic();
             }
 
-            // Use absolute path to the file under /me/music/
+            const title = getSongDisplayName(songFile);
+            if (IN_SHELL && window.parent) {
+                // Ask shell to take over background music
+                window.parent.postMessage({ type: 'SET_BGM', action: 'play', song: songFile, title }, '*');
+                musicPlaying = true;
+                currentSong = songFile;
+                // Update UI
+                const p = document.querySelector('.action-card:nth-child(3) p');
+                if (p) p.textContent = `Playing: ${title}`;
+                const stopBtn = document.querySelector('.stop-music');
+                if (stopBtn) stopBtn.style.display = 'block';
+                const musicOptions = document.querySelector('.music-options');
+                if (musicOptions) musicOptions.style.display = 'none';
+                return;
+            }
+
+            // Fallback: local playback when not in app shell
             audio = new Audio(`/me/music/${songFile}`);
             audio.loop = true;
             audio.play()
                 .then(() => {
                     musicPlaying = true;
                     currentSong = songFile;
-
-                    // Update UI
-                    document.querySelector('.action-card:nth-child(3) p').textContent = `Playing: ${getSongDisplayName(songFile)}`;
-                    document.querySelector('.stop-music').style.display = 'block';
-
-                    // Hide song selection buttons
+                    const p = document.querySelector('.action-card:nth-child(3) p');
+                    if (p) p.textContent = `Playing: ${title}`;
+                    const stopBtn = document.querySelector('.stop-music');
+                    if (stopBtn) stopBtn.style.display = 'block';
                     const musicOptions = document.querySelector('.music-options');
-                    musicOptions.style.display = 'none';
-
-                    // Persist state
+                    if (musicOptions) musicOptions.style.display = 'none';
                     saveMusicState();
-
-                    // Keep saving time periodically
-                    if (audio) {
-                        audio.ontimeupdate = () => saveMusicState();
-                    }
+                    if (audio) audio.ontimeupdate = () => saveMusicState();
                 })
                 .catch((error) => {
                     console.log('Could not play music:', error);
@@ -320,22 +329,18 @@
         }
 
         function stopMusic() {
-            if (audio) {
-                audio.pause();
-                audio = null;
+            if (IN_SHELL && window.parent) {
+                window.parent.postMessage({ type: 'SET_BGM', action: 'stop' }, '*');
             }
+            if (audio) { audio.pause(); audio = null; }
             musicPlaying = false;
             currentSong = '';
-
-            // Update UI
-            document.querySelector('.action-card:nth-child(3) p').textContent = 'Choose a song to play';
-            document.querySelector('.stop-music').style.display = 'none';
-
-            // Show song selection buttons
+            const p = document.querySelector('.action-card:nth-child(3) p');
+            if (p) p.textContent = 'Choose a song to play';
+            const stopBtn = document.querySelector('.stop-music');
+            if (stopBtn) stopBtn.style.display = 'none';
             const musicOptions = document.querySelector('.music-options');
-            musicOptions.style.display = 'flex';
-
-            // Clear persisted state
+            if (musicOptions) musicOptions.style.display = 'flex';
             localStorage.removeItem('bgm_song');
             localStorage.removeItem('bgm_time');
             localStorage.setItem('bgm_playing', 'false');
@@ -450,6 +455,8 @@
         }
 
         function loadAndResumeMusic() {
+            // If inside app shell, let the shell manage music; do not auto-play locally
+            if (IN_SHELL) return;
             const song = localStorage.getItem('bgm_song');
             const playing = localStorage.getItem('bgm_playing') === 'true';
             const time = parseFloat(localStorage.getItem('bgm_time') || '0');
@@ -464,14 +471,12 @@
                 audio.play().then(() => {
                     musicPlaying = true;
                     currentSong = song;
-                    // Update main card UI if visible (desktop)
                     const cardP = document.querySelector('.action-card:nth-child(3) p');
                     if (cardP) cardP.textContent = `Playing: ${getSongDisplayName(song)}`;
                     const stopBtn = document.querySelector('.stop-music');
                     if (stopBtn) stopBtn.style.display = 'block';
                     const musicOptions = document.querySelector('.music-options');
                     if (musicOptions) musicOptions.style.display = 'none';
-
                     if (audio) audio.ontimeupdate = () => saveMusicState();
                 }).catch(() => {
                     // If autoplay blocked, leave state; will start on user gesture

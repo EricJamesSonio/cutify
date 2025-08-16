@@ -13,9 +13,9 @@
     .app { display: grid; grid-template-rows: auto 1fr; height: 100%; }
     .topbar { display:flex; align-items:center; gap:12px; padding:10px 14px; background: var(--card); border-bottom:1px solid #222; position: sticky; top:0; z-index: 5; }
     .brand { font-weight:700; color:#fff; }
-    .nav { display:flex; gap:8px; flex-wrap: wrap; }
-    .nav button { background:#223; color:#c9d1d9; border:1px solid #2b3a55; padding:6px 10px; border-radius:8px; cursor:pointer; }
-    .nav button:hover { background:#2a3a66; }
+    .chooser { display:flex; gap:8px; flex-wrap: wrap; }
+    .chooser button { background:#223; color:#c9d1d9; border:1px solid #2b3a55; padding:6px 10px; border-radius:8px; cursor:pointer; }
+    .chooser button:hover { background:#2a3a66; }
 
     .content { position: relative; }
     iframe { width: 100%; height: calc(100dvh - 56px); border: 0; background:#0b0f14; }
@@ -36,12 +36,9 @@
   <div class="app">
     <div class="topbar">
       <div class="brand">💙 Cutify</div>
-      <div class="nav">
-        <button onclick="goto('/choices')">Choices</button>
-        <button onclick="goto('/visit')">Visit Room</button>
-        <button onclick="goto('/chat')">Chat</button>
-        <button onclick="goto('/gallery')">Gallery</button>
-        <button onclick="goto('/me')">Profile</button>
+      <div class="chooser">
+        <button onclick="chooseSong('sofiathefirst.mp3.mp3','Sofia the First')">Sofia the First</button>
+        <button onclick="chooseSong('purplebarbie.mp3.mp3','Purple Barbie')">Purple Barbie</button>
       </div>
       <div class="player">
         <span class="title" id="songTitle">Sofia the First</span>
@@ -55,7 +52,7 @@
   </div>
 
   <!-- Hidden audio element that persists while navigating inside the iframe -->
-  <audio id="bgm" preload="auto" loop src="/me/music/sofiathefirst.mp3.mp3"></audio>
+  <audio id="bgm" preload="auto" loop></audio>
 
   <!-- Starter overlay for mobile autoplay compliance -->
   <div class="starter" id="starter">
@@ -71,13 +68,6 @@
     const playPauseBtn = document.getElementById('playPause');
 
     async function startApp() {
-      try {
-        await audio.play();
-        playPauseBtn.textContent = '⏸';
-      } catch (e) {
-        // If autoplay still blocked, show a quick retry by user tap
-        playPauseBtn.textContent = '▶️';
-      }
       // Load initial page inside iframe (Choices by default)
       goto('/choices');
       starter.style.display = 'none';
@@ -104,9 +94,23 @@
       frame.src = path;
     }
 
+    function chooseSong(file, title) {
+      const src = `/me/music/${file}`;
+      if (audio.src !== src) audio.src = src;
+      audio.play();
+      document.getElementById('songTitle').textContent = title;
+      playPauseBtn.textContent = '⏸';
+      try { localStorage.setItem('shell_bgm_src', file); } catch (e) {}
+    }
+
     // Optional: resume from prior session
     (function restore() {
       const t = parseFloat(localStorage.getItem('shell_bgm_t') || '0');
+      const file = localStorage.getItem('shell_bgm_src');
+      if (file) {
+        audio.src = `/me/music/${file}`;
+        document.getElementById('songTitle').textContent = file.includes('purple') ? 'Purple Barbie' : 'Sofia the First';
+      }
       if (!isNaN(t) && t > 0) audio.currentTime = t;
     })();
     audio.ontimeupdate = () => {
@@ -137,6 +141,28 @@
         });
       } catch (e) {
         // Same-origin so normally fine; ignore if any error
+      }
+    });
+
+    // Listen for commands from inner pages to control background music
+    window.addEventListener('message', (event) => {
+      const data = event.data || {};
+      if (data.type === 'SET_BGM') {
+        if (data.song) {
+          const src = `/me/music/${data.song}`;
+          if (audio.src !== src) {
+            audio.src = src;
+            try { localStorage.setItem('shell_bgm_src', data.song); } catch (e) {}
+          }
+        }
+        if (data.action === 'play') {
+          audio.play();
+          playPauseBtn.textContent = '⏸';
+          if (data.title) document.getElementById('songTitle').textContent = data.title;
+        } else if (data.action === 'pause' || data.action === 'stop') {
+          audio.pause();
+          playPauseBtn.textContent = '▶️';
+        }
       }
     });
   </script>
