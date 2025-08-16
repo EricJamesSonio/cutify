@@ -61,6 +61,11 @@ def me():
 def visit():
     return render_template("visit.html")
 
+# Persistent audio shell route
+@app.route("/app")
+def app_shell():
+    return render_template("app_shell.html")
+
 # New gallery route
 @app.route("/gallery")
 def gallery():
