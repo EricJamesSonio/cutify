@@ -17,6 +17,24 @@
                     <div class="window-cross-h"></div>
                     <div class="window-cross-v"></div>
                 </div>
+
+        <!-- Mobile Toolbar -->
+        <div class="mobile-toolbar" aria-label="Quick actions">
+            <button class="toolbar-btn" onclick="openDrawer('chat')" title="Chat">💬</button>
+            <button class="toolbar-btn" onclick="openDrawer('music')" title="Music">🎵</button>
+            <button class="toolbar-btn" onclick="openDrawer('gallery')" title="Gallery">📸</button>
+            <button class="toolbar-btn" onclick="openDrawer('bed')" title="Bed">🛏️</button>
+            <button class="toolbar-btn" onclick="goBack()" title="Back">↩️</button>
+        </div>
+
+        <!-- Sliding Drawer -->
+        <aside id="actionDrawer" class="action-drawer" aria-hidden="true">
+            <div class="drawer-header">
+                <h3 class="drawer-title" id="drawerTitle">Actions</h3>
+                <button class="drawer-close" aria-label="Close" onclick="closeDrawer()">×</button>
+            </div>
+            <div id="drawerContent"></div>
+        </aside>
                 <div class="curtains">
                     <div class="curtain-left"></div>
                     <div class="curtain-right"></div>
@@ -178,6 +196,55 @@
             document.getElementById('welcomeOverlay').style.display = 'none';
         }
 
+        // Drawer helpers
+        function openDrawer(section) {
+            const drawer = document.getElementById('actionDrawer');
+            const title = document.getElementById('drawerTitle');
+            const content = document.getElementById('drawerContent');
+            drawer.classList.add('open');
+            drawer.setAttribute('aria-hidden', 'false');
+
+            if (section === 'chat') {
+                title.textContent = 'Start Chat';
+                content.innerHTML = `
+                    <p>Talk with EJ 💬</p>
+                    <button class="action-btn" onclick="startChat()">Go to Chat</button>
+                `;
+            } else if (section === 'music') {
+                title.textContent = 'Play Music';
+                content.innerHTML = `
+                    <p>${musicPlaying ? 'Playing: ' + getSongDisplayName(currentSong) : 'Choose a song to play'}</p>
+                    <div class="music-options" style="display:${musicPlaying ? 'none' : 'flex'}">
+                        <button class="music-btn" onclick="playMusic('sofiathefirst.mp3.mp3')">Sofia the First</button>
+                        <button class="music-btn" onclick="playMusic('purplebarbie.mp3.mp3')">Purple Barbie</button>
+                        <button class="music-btn" onclick="playMusic('givemeyourforever.mp3.mp3')">Our Song 💙</button>
+                    </div>
+                    <button class="action-btn stop-music" style="display:${musicPlaying ? 'block' : 'none'}" onclick="stopMusic()">Stop Music</button>
+                `;
+            } else if (section === 'gallery') {
+                title.textContent = 'View Gallery';
+                content.innerHTML = `
+                    <p>See our beautiful memories 📸</p>
+                    <button class="action-btn" onclick="openGallery()">Open Gallery</button>
+                `;
+            } else if (section === 'bed') {
+                title.textContent = 'Sit on Bed';
+                content.innerHTML = `
+                    <p>Relax and get comfy 🛏️</p>
+                    <button class="action-btn" onclick="sitOnBed()">Sit</button>
+                `;
+            } else {
+                title.textContent = 'Actions';
+                content.innerHTML = '';
+            }
+        }
+
+        function closeDrawer() {
+            const drawer = document.getElementById('actionDrawer');
+            drawer.classList.remove('open');
+            drawer.setAttribute('aria-hidden', 'true');
+        }
+
         function sitOnBed() {
             showMessage("Come here, babe! Let's cuddle on the bed together 💙", "bed");
         }
@@ -212,6 +279,14 @@
                     // Hide song selection buttons
                     const musicOptions = document.querySelector('.music-options');
                     musicOptions.style.display = 'none';
+
+                    // Persist state
+                    saveMusicState();
+
+                    // Keep saving time periodically
+                    if (audio) {
+                        audio.ontimeupdate = () => saveMusicState();
+                    }
                 })
                 .catch((error) => {
                     console.log('Could not play music:', error);
@@ -234,6 +309,11 @@
             // Show song selection buttons
             const musicOptions = document.querySelector('.music-options');
             musicOptions.style.display = 'flex';
+
+            // Clear persisted state
+            localStorage.removeItem('bgm_song');
+            localStorage.removeItem('bgm_time');
+            localStorage.setItem('bgm_playing', 'false');
         }
 
         function getSongDisplayName(songFile) {
@@ -328,7 +408,53 @@
                 // Clear the message after displaying
                 localStorage.removeItem('moodMessage');
             }
+
+            // Auto-resume music if previously playing
+            loadAndResumeMusic();
         });
+
+        // Persist music state helpers
+        function saveMusicState() {
+            try {
+                if (audio && currentSong) {
+                    localStorage.setItem('bgm_song', currentSong);
+                    localStorage.setItem('bgm_time', String(audio.currentTime || 0));
+                    localStorage.setItem('bgm_playing', String(musicPlaying));
+                }
+            } catch (e) { /* ignore quota errors */ }
+        }
+
+        function loadAndResumeMusic() {
+            const song = localStorage.getItem('bgm_song');
+            const playing = localStorage.getItem('bgm_playing') === 'true';
+            const time = parseFloat(localStorage.getItem('bgm_time') || '0');
+            if (song && playing) {
+                audio = new Audio(`/me/music/${song}`);
+                audio.loop = true;
+                audio.addEventListener('loadedmetadata', () => {
+                    if (!isNaN(time)) {
+                        try { audio.currentTime = time; } catch (e) {}
+                    }
+                });
+                audio.play().then(() => {
+                    musicPlaying = true;
+                    currentSong = song;
+                    // Update main card UI if visible (desktop)
+                    const cardP = document.querySelector('.action-card:nth-child(3) p');
+                    if (cardP) cardP.textContent = `Playing: ${getSongDisplayName(song)}`;
+                    const stopBtn = document.querySelector('.stop-music');
+                    if (stopBtn) stopBtn.style.display = 'block';
+                    const musicOptions = document.querySelector('.music-options');
+                    if (musicOptions) musicOptions.style.display = 'none';
+
+                    if (audio) audio.ontimeupdate = () => saveMusicState();
+                }).catch(() => {
+                    // If autoplay blocked, leave state; will start on user gesture
+                });
+            }
+        }
+
+        window.addEventListener('beforeunload', saveMusicState);
 
         function displayMoodResponse(message, mood) {
             const messageContainer = document.getElementById('messageContainer');

@@ -71,6 +71,26 @@
     function goBack() {
       window.location.href = '/';
     }
+    // Auto-resume background music on this page
+    (function(){
+      function resume(){
+        try{
+          const s = localStorage.getItem('bgm_song');
+          const p = localStorage.getItem('bgm_playing') === 'true';
+          const t = parseFloat(localStorage.getItem('bgm_time') || '0');
+          if (s && p && !window._bgm) {
+            const a = new Audio(`/me/music/${s}`);
+            a.loop = true;
+            a.addEventListener('loadedmetadata', ()=>{ if(!isNaN(t)){ try{ a.currentTime = t }catch(e){} } });
+            a.play().then(()=>{
+              window._bgm = a;
+              a.ontimeupdate = ()=>{ try{ localStorage.setItem('bgm_time', String(a.currentTime||0)) }catch(e){} };
+            }).catch(()=>{});
+          }
+        }catch(e){}
+      }
+      if (document.readyState === 'complete') resume(); else window.addEventListener('load', resume);
+    })();
   </script>
 </body>
 </html>
