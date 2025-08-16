@@ -15,6 +15,18 @@ body {
     overflow-x: hidden;
 }
 
+.visit-btn {
+    background: linear-gradient(45deg, #e74c3c, #c0392b);
+    color: white;
+
+    &:hover {
+        transform: translateY(-3px) scale(1.05);
+        background: linear-gradient(45deg, #ff6f61, #e74c3c);
+        box-shadow: 0 12px 25px rgba(231, 76, 60, 0.4);
+    }
+}
+
+
 .container {
     width: 100%;
     max-width: 600px;
