@@ -6,26 +6,35 @@
   <title>Cutify App Shell • Continuous Music</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
   <style>
-    :root { --brand:#4b8bff; --bg:#0d1117; --card:#161b22; --text:#e6edf3; }
+    :root {
+      --brand:#8e6bff; /* purple */
+      --brand2:#ff7ad9; /* pink */
+      --bg:#0e0a16; /* deep purple bg */
+      --card:#1a1230; /* dark card */
+      --text:#f3e9ff; /* soft lavender */
+      --glow: 0 10px 24px rgba(142,107,255,0.35);
+    }
     * { box-sizing: border-box; }
     html, body { height: 100%; margin: 0; font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background: var(--bg); color: var(--text); }
 
     .app { display: grid; grid-template-rows: auto 1fr; height: 100%; }
-    .topbar { display:flex; align-items:center; gap:12px; padding:10px 14px; background: var(--card); border-bottom:1px solid #222; position: sticky; top:0; z-index: 5; }
-    .brand { font-weight:700; color:#fff; }
-    .chooser { display:flex; gap:8px; flex-wrap: wrap; }
-    .chooser button { background:#223; color:#c9d1d9; border:1px solid #2b3a55; padding:6px 10px; border-radius:8px; cursor:pointer; }
-    .chooser button:hover { background:#2a3a66; }
+    .topbar { display:flex; align-items:center; gap:12px; padding:10px 14px; background: linear-gradient(135deg, rgba(142,107,255,0.25), rgba(255,122,217,0.15)); border-bottom:1px solid rgba(255,255,255,0.06); position: sticky; top:0; z-index: 5; backdrop-filter: blur(6px); }
+    .brand { font-weight:700; color:#fff; text-shadow: 0 2px 12px rgba(255,122,217,0.35); }
 
     .content { position: relative; }
     iframe { width: 100%; height: calc(100dvh - 56px); border: 0; background:#0b0f14; }
 
     /* Starter overlay to capture user gesture for mobile autoplay */
-    .starter { position: fixed; inset: 0; background: radial-gradient(1200px 800px at 60% 30%, #1c2535, #0b0f14 60%); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; z-index: 10; text-align:center; padding: 20px; }
-    .starter h1 { margin:0; font-size: 1.6rem; }
-    .starter p { opacity: 0.8; margin: 0; }
-    .start-btn { background: linear-gradient(135deg, #5aa0ff, #3d7dff); color:white; border: none; padding: 12px 18px; border-radius: 12px; font-weight:700; cursor:pointer; box-shadow: 0 10px 24px rgba(61,125,255,0.35); }
+    .starter { position: fixed; inset: 0; background:
+        radial-gradient(1200px 800px at 60% 30%, rgba(142,107,255,0.25), transparent 60%),
+        linear-gradient(180deg, #130a22, #0e0a16 60%);
+        display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; z-index: 10; text-align:center; padding: 20px; }
+    .starter h1 { margin:0; font-size: 1.8rem; color:#ffe6ff; text-shadow: 0 2px 18px rgba(255,122,217,0.35); }
+    .starter p { opacity: 0.9; margin: 0; color:#f7e6ff; }
+    .start-btn { background: linear-gradient(135deg, var(--brand2), var(--brand)); color:white; border: none; padding: 12px 18px; border-radius: 14px; font-weight:700; cursor:pointer; box-shadow: var(--glow); }
     .start-btn:active { transform: translateY(1px); }
+    .hearts { position:absolute; bottom: 12%; display:flex; gap:10px; font-size: 22px; opacity:0.9; }
+    .hearts span { filter: drop-shadow(0 2px 10px rgba(255,122,217,0.35)); }
 
     .player { display:flex; align-items:center; gap:8px; margin-left:auto; }
     .player .title { font-size: 0.9rem; opacity: 0.85; }
@@ -35,11 +44,7 @@
 <body>
   <div class="app">
     <div class="topbar">
-      <div class="brand">💙 Cutify</div>
-      <div class="chooser">
-        <button onclick="chooseSong('sofiathefirst.mp3.mp3','Sofia the First')">Sofia the First</button>
-        <button onclick="chooseSong('purplebarbie.mp3.mp3','Purple Barbie')">Purple Barbie</button>
-      </div>
+      <div class="brand">💜 Cutify</div>
       <div class="player">
         <span class="title" id="songTitle">Sofia the First</span>
         <button onclick="togglePlay()" id="playPause">⏸</button>
@@ -56,9 +61,10 @@
 
   <!-- Starter overlay for mobile autoplay compliance -->
   <div class="starter" id="starter">
-    <h1>Tap to Start</h1>
-    <p>We'll play Sofia the First while you explore. Music continues across pages.</p>
+    <h1>Tap to Start 💜</h1>
+    <p>We’ll play Sofia the First while you explore. Music continues across pages.</p>
     <button class="start-btn" onclick="startApp()">Start</button>
+    <div class="hearts"><span>💙</span><span>💜</span><span>💕</span><span>✨</span></div>
   </div>
 
   <script>
@@ -68,6 +74,8 @@
     const playPauseBtn = document.getElementById('playPause');
 
     async function startApp() {
+      // Default to Sofia on start
+      safeSwitch('/me/music/sofiathefirst.mp3.mp3', 'Sofia the First', true);
       // Load initial page inside iframe (Choices by default)
       goto('/choices');
       starter.style.display = 'none';
@@ -94,13 +102,13 @@
       frame.src = path;
     }
 
-    function chooseSong(file, title) {
-      const src = `/me/music/${file}`;
-      if (audio.src !== src) audio.src = src;
-      audio.play();
+    function safeSwitch(src, title, autoplay=false) {
+      try { audio.pause(); } catch(e) {}
+      audio.currentTime = 0;
+      audio.src = src;
+      if (autoplay) { audio.play(); playPauseBtn.textContent = '⏸'; } else { playPauseBtn.textContent = '▶️'; }
       document.getElementById('songTitle').textContent = title;
-      playPauseBtn.textContent = '⏸';
-      try { localStorage.setItem('shell_bgm_src', file); } catch (e) {}
+      try { localStorage.setItem('shell_bgm_src', src.split('/').pop()); } catch (e) {}
     }
 
     // Optional: resume from prior session
@@ -151,6 +159,8 @@
         if (data.song) {
           const src = `/me/music/${data.song}`;
           if (audio.src !== src) {
+            try { audio.pause(); } catch(e) {}
+            audio.currentTime = 0;
             audio.src = src;
             try { localStorage.setItem('shell_bgm_src', data.song); } catch (e) {}
           }
