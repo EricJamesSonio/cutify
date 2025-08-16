@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, redirect, url_for
 from flask_cors import CORS
 from jinja2 import ChoiceLoader, FileSystemLoader
 import json, random, os, re, difflib, unicodedata
@@ -19,7 +19,8 @@ app.jinja_loader = ChoiceLoader([
 # Routes for HTML pages
 @app.route("/")
 def home():
-    return render_template("home.html")
+    # Redirect to app shell to ensure continuous music across navigation
+    return redirect(url_for('app_shell'))
 
 @app.route("/choices")
 def choices():
