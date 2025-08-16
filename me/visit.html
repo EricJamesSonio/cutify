@@ -177,27 +177,11 @@
             <div class="heart">✨</div>
         </div>
 
-        <!-- Welcome message overlay -->
-        <div class="welcome-overlay" id="welcomeOverlay">
-            <div class="welcome-content">
-                <h2>Welcome to my room, beautiful! 💙</h2>
-                <p>I'm so happy you're here with me. What would you like to do together?</p>
-                <button class="close-welcome" onclick="closeWelcome()">Let's explore! ✨</button>
-            </div>
-        </div>
+        
     </div>
 
     <script>
-        // Show welcome message on load
-        window.onload = function () {
-            setTimeout(() => {
-                document.getElementById('welcomeOverlay').style.display = 'flex';
-            }, 500);
-        };
-
-        function closeWelcome() {
-            document.getElementById('welcomeOverlay').style.display = 'none';
-        }
+        
 
         // Popup helpers
         function openPopup(section) {

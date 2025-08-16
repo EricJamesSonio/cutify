@@ -194,7 +194,6 @@ def chat():
     mood = data.get('mood', None)
 
     responses_data = load_responses()
-    response_text = "Hi Babe! "
 
     # Smart keyword matching with typo tolerance
     keywords = list(responses_data['keywords'].keys())
@@ -203,12 +202,9 @@ def chat():
     # Thresholds: exact/substring -> 1.0, fuzzy accept >= 0.82
     if best_key is not None and score >= 0.82:
         responses = responses_data['keywords'][best_key]
-        response_text += random.choice(responses) + " "
+        response_text = random.choice(responses)
     else:
-        response_text += random.choice(responses_data['default']) + " "
-
-    # Signature
-    response_text += "ILOVEYOUUUUVERYMUCH BABE!"
+        response_text = random.choice(responses_data['default'])
 
     return jsonify({
         'response': response_text,
