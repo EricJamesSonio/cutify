@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Our Gallery 📸</title>
-  <link rel="stylesheet" href="/static/gallery.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='me/gallery.css') }}" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
 </head>
 <body>
@@ -17,7 +17,7 @@
     <div class="albums-grid">
       <div class="album-card" onclick="openAlbum('firstdate')">
         <div class="album-cover">
-          <img src="/static/images/g1.jfif" alt="First Date" class="cover-image" />
+          <img src="/me/images/g1.jfif" alt="First Date" class="cover-image" />
           <div class="album-overlay">
             <div class="album-icon">💕</div>
             <h3>First Date</h3>
@@ -29,7 +29,7 @@
 
       <div class="album-card" onclick="openAlbum('walter')">
         <div class="album-cover">
-          <img src="/static/images/f1.jfif" alt="Walter Date" class="cover-image" />
+          <img src="/me/images/f1.jfif" alt="Walter Date" class="cover-image" />
           <div class="album-overlay">
             <div class="album-icon">🌟</div>
             <h3>Walter Date</h3>
@@ -41,7 +41,7 @@
 
       <div class="album-card" onclick="openAlbum('tricia')">
         <div class="album-cover">
-          <img src="/static/images/h1.jfif" alt="Tricia's Debut" class="cover-image" />
+          <img src="/me/images/h1.jfif" alt="Tricia's Debut" class="cover-image" />
           <div class="album-overlay">
             <div class="album-icon">✨</div>
             <h3>Tricia's Debut</h3>
@@ -53,7 +53,7 @@
 
       <div class="album-card" onclick="openAlbum('lastpicture')">
         <div class="album-cover">
-          <img src="/static/images/l1.jfif" alt="Last Picture" class="cover-image" />
+          <img src="/me/images/l1.jfif" alt="Last Picture" class="cover-image" />
           <div class="album-overlay">
             <div class="album-icon">💫</div>
             <h3>Last Picture</h3>
@@ -134,7 +134,7 @@
               document.getElementById(`${albumKey}-count`).textContent = 'No photos';
             }
           };
-          img.src = `/static/images/${album.prefix}${i}.jfif`;
+          img.src = `/me/images/${album.prefix}${i}.jfif`;
         }
       });
     }
@@ -156,7 +156,7 @@
       for (let i = 1; i <= maxImages; i++) {
         const img = new Image();
         img.onload = () => {
-          const imagePath = `/static/images/${album.prefix}${i}.jfif`;
+          const imagePath = `/me/images/${album.prefix}${i}.jfif`;
           currentImages.push(imagePath);
 
           if (loadedCount === 0) photoGrid.innerHTML = '';
@@ -175,7 +175,7 @@
             photoGrid.innerHTML = '<div class="no-photos">No photos found in this album</div>';
           }
         };
-        img.src = `/static/images/${album.prefix}${i}.jfif`;
+        img.src = `/me/images/${album.prefix}${i}.jfif`;
       }
     }
 

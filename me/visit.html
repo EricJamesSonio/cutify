@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Visit EJ's Room 💙</title>
-    <link rel="stylesheet" href="visit.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='me/visit.css') }}" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
 </head>
 <body>
@@ -85,7 +85,7 @@
 
             <!-- EJ in the room -->
             <div class="ej-character">
-                <img src="images/me.jpg" alt="EJ" class="ej-photo" />
+                <img src="{{ url_for('static', filename='images/me.jpg') }}" alt="EJ" class="ej-photo" />
                 <div class="speech-bubble">
                     <p>Hey babe! Welcome to my room! 💙</p>
                     <div class="bubble-tail"></div>
@@ -183,8 +183,8 @@
         }
 
         function startChat() {
-            // Redirect relative to current URL
-            window.location.href = 'me.html';
+            // Navigate using Flask route
+            window.location.href = '/me';
         }
 
         let musicPlaying = false;
@@ -197,7 +197,8 @@
                 stopMusic();
             }
 
-            audio = new Audio(`music/${songFile}`);
+            // Use absolute path to the file under /me/music/
+            audio = new Audio(`/me/music/${songFile}`);
             audio.loop = true;
             audio.play()
                 .then(() => {
@@ -270,16 +271,29 @@
         }
 
         function goBack() {
+            // Map previousPage values to Flask routes
+            const routes = {
+                sad: '/sadpage',
+                happy: '/happypage',
+                missing: '/missingpage',
+                angry: '/angrypage',
+                confused: '/confusedpage',
+                hurt: '/hurtpage',
+                fine: '/finepage',
+                choices: '/choices'
+            };
+
             const previousPage = localStorage.getItem('previousPage');
-            if (previousPage) {
-                window.location.href = `../choosen/${previousPage}.html`;
+            if (previousPage && routes[previousPage]) {
+                window.location.href = routes[previousPage];
             } else {
-                window.location.href = '../choices/choices.html';
+                window.location.href = routes.choices;
             }
         }
 
         function openGallery() {
-            window.location.href = 'gallery.html';
+            // Navigate using Flask route
+            window.location.href = '/gallery';
         }
 
         function closeMessage() {
@@ -353,7 +367,7 @@
                     <div class="message-bubble bot-bubble">
                         <p>${botResponse}</p>
                         <span class="timestamp">${new Date().toLocaleTimeString([], {
-                            hour: '2-digit',
+                            hour: '2-digit', 
                             minute: '2-digit',
                         })}</span>
                     </div>

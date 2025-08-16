@@ -59,6 +59,12 @@ def me():
 @app.route("/visit")
 def visit():
     return render_template("visit.html")
+
+# New gallery route
+@app.route("/gallery")
+def gallery():
+    return render_template("gallery.html")
+
 # Load responses from JSON file
 def load_responses():
     try:
