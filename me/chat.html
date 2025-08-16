@@ -27,12 +27,12 @@
 
     <footer class="chat-input">
       <div class="tool-row" id="quickTags">
-        <button class="tag" onclick="setMood('happy')">😊 Happy</button>
-        <button class="tag" onclick="setMood('sad')">😢 Sad</button>
-        <button class="tag" onclick="setMood('angry')">😠 Angry</button>
-        <button class="tag" onclick="setMood('confused')">😕 Confused</button>
-        <button class="tag" onclick="setMood('hurt')">💔 Hurt</button>
-        <button class="tag" onclick="setMood('missing')">🥺 Missing</button>
+        <button class="tag" onclick="quickMood('Happy','😊','happy')">😊 Happy</button>
+        <button class="tag" onclick="quickMood('Sad','😢','sad')">😢 Sad</button>
+        <button class="tag" onclick="quickMood('Angry','😠','angry')">😠 Angry</button>
+        <button class="tag" onclick="quickMood('Confused','😕','confused')">😕 Confused</button>
+        <button class="tag" onclick="quickMood('Hurt','💔','hurt')">💔 Hurt</button>
+        <button class="tag" onclick="quickMood('Missing you','🥺','missing')">🥺 Missing</button>
       </div>
       <div class="input-row">
         <input id="textbox" class="textbox" type="text" placeholder="Type a message..." autocomplete="off" />
@@ -56,6 +56,12 @@
     function setMood(m){
       currentMood = m;
       el.status.textContent = `Online • Mood set: ${m}`;
+    }
+
+    function quickMood(label, emoji, mood){
+      setMood(mood);
+      el.textbox.value = `${label} ${emoji}`;
+      sendMessage();
     }
 
     function appendMessage(text, who='you'){
@@ -104,7 +110,7 @@
         });
         const data = await res.json();
         removeTyping();
-        appendMessage(data.response || '...');
+        appendMessage(data.response || '...', 'bot');
       } catch (e){
         removeTyping();
         appendMessage('Sorry, something went wrong. Please try again.');

@@ -69,6 +69,54 @@
     color: #7f8c8d;
 }
 
+/* Centered Popup Overlay */
+.popup-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2500; /* above toolbar and drawer */
+    padding: 16px;
+}
+
+.popup {
+    width: 100%;
+    max-width: 420px;
+    background: rgba(255,255,255,0.97);
+    border: 2px solid rgba(52, 152, 219, 0.25);
+    border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+    backdrop-filter: blur(10px);
+}
+
+.popup-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(41,128,185,0.2);
+}
+
+.popup-header h3 {
+    margin: 0;
+    color: #2980b9;
+    font-weight: 700;
+}
+
+.popup-close {
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    color: #7f8c8d;
+}
+
+.popup-content {
+    padding: 14px;
+}
+
 body {
     font-family: 'Poppins', sans-serif;
     background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);

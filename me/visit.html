@@ -20,21 +20,24 @@
 
         <!-- Mobile Toolbar -->
         <div class="mobile-toolbar" aria-label="Quick actions">
-            <button class="toolbar-btn" onclick="openDrawer('chat')" title="Chat">💬</button>
-            <button class="toolbar-btn" onclick="openDrawer('music')" title="Music">🎵</button>
-            <button class="toolbar-btn" onclick="openDrawer('gallery')" title="Gallery">📸</button>
-            <button class="toolbar-btn" onclick="openDrawer('bed')" title="Bed">🛏️</button>
+            <button class="toolbar-btn" onclick="openPopup('chat')" title="Chat">💬</button>
+            <button class="toolbar-btn" onclick="openPopup('music')" title="Music">🎵</button>
+            <button class="toolbar-btn" onclick="openPopup('gallery')" title="Gallery">📸</button>
+            <button class="toolbar-btn" onclick="openPopup('bed')" title="Bed">🛏️</button>
             <button class="toolbar-btn" onclick="goBack()" title="Back">↩️</button>
         </div>
 
-        <!-- Sliding Drawer -->
-        <aside id="actionDrawer" class="action-drawer" aria-hidden="true">
-            <div class="drawer-header">
-                <h3 class="drawer-title" id="drawerTitle">Actions</h3>
-                <button class="drawer-close" aria-label="Close" onclick="closeDrawer()">×</button>
+        <!-- Centered Popup Overlay -->
+        <div id="popupOverlay" class="popup-overlay" aria-hidden="true" onclick="overlayClick(event)">
+            <div class="popup" role="dialog" aria-modal="true" aria-labelledby="popupTitle">
+                <div class="popup-header">
+                    <h3 id="popupTitle">Actions</h3>
+                    <button class="popup-close" aria-label="Close" onclick="closePopup()">×</button>
+                </div>
+                <div id="popupContent" class="popup-content"></div>
             </div>
-            <div id="drawerContent"></div>
-        </aside>
+        </div>
+
                 <div class="curtains">
                     <div class="curtain-left"></div>
                     <div class="curtain-right"></div>
@@ -196,13 +199,13 @@
             document.getElementById('welcomeOverlay').style.display = 'none';
         }
 
-        // Drawer helpers
-        function openDrawer(section) {
-            const drawer = document.getElementById('actionDrawer');
-            const title = document.getElementById('drawerTitle');
-            const content = document.getElementById('drawerContent');
-            drawer.classList.add('open');
-            drawer.setAttribute('aria-hidden', 'false');
+        // Popup helpers
+        function openPopup(section) {
+            const overlay = document.getElementById('popupOverlay');
+            const title = document.getElementById('popupTitle');
+            const content = document.getElementById('popupContent');
+            overlay.style.display = 'flex';
+            overlay.setAttribute('aria-hidden', 'false');
 
             if (section === 'chat') {
                 title.textContent = 'Start Chat';
@@ -213,19 +216,18 @@
             } else if (section === 'music') {
                 title.textContent = 'Play Music';
                 content.innerHTML = `
-                    <p>${musicPlaying ? 'Playing: ' + getSongDisplayName(currentSong) : 'Choose a song to play'}</p>
-                    <div class="music-options" style="display:${musicPlaying ? 'none' : 'flex'}">
-                        <button class="music-btn" onclick="playMusic('sofiathefirst.mp3.mp3')">Sofia the First</button>
-                        <button class="music-btn" onclick="playMusic('purplebarbie.mp3.mp3')">Purple Barbie</button>
-                        <button class="music-btn" onclick="playMusic('givemeyourforever.mp3.mp3')">Our Song 💙</button>
+                    <div class="music-options">
+                        <button class="music-btn" onclick=\"playMusic('sofiathefirst.mp3.mp3')\">Sofia the First</button>
+                        <button class="music-btn" onclick=\"playMusic('purplebarbie.mp3.mp3')\">Purple Barbie</button>
+                        <button class="music-btn" onclick=\"playMusic('givemeyourforever.mp3.mp3')\">Our Song 💙</button>
                     </div>
-                    <button class="action-btn stop-music" style="display:${musicPlaying ? 'block' : 'none'}" onclick="stopMusic()">Stop Music</button>
+                    <button class="action-btn stop-music" onclick="stopMusic()" style="display: none;">Stop Music</button>
                 `;
             } else if (section === 'gallery') {
                 title.textContent = 'View Gallery';
                 content.innerHTML = `
-                    <p>See our beautiful memories 📸</p>
-                    <button class="action-btn" onclick="openGallery()">Open Gallery</button>
+                    <p>Our beautiful memories 📸</p>
+                    <button class="action-btn" onclick="openGallery()">View Photos</button>
                 `;
             } else if (section === 'bed') {
                 title.textContent = 'Sit on Bed';
@@ -233,16 +235,17 @@
                     <p>Relax and get comfy 🛏️</p>
                     <button class="action-btn" onclick="sitOnBed()">Sit</button>
                 `;
-            } else {
-                title.textContent = 'Actions';
-                content.innerHTML = '';
             }
         }
 
-        function closeDrawer() {
-            const drawer = document.getElementById('actionDrawer');
-            drawer.classList.remove('open');
-            drawer.setAttribute('aria-hidden', 'true');
+        function closePopup() {
+            const overlay = document.getElementById('popupOverlay');
+            overlay.style.display = 'none';
+            overlay.setAttribute('aria-hidden', 'true');
+        }
+
+        function overlayClick(e) {
+            if (e.target.id === 'popupOverlay') closePopup();
         }
 
         function sitOnBed() {
