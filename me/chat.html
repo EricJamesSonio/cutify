@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chat with EJ 💬</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='me/chat.css') }}" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="chat-wrapper">
+    <header class="chat-header">
+      <div class="avatar">
+        <img src="{{ url_for('static', filename='images/me.jpg') }}" alt="EJ" />
+      </div>
+      <div class="header-info">
+        <div class="header-title">EJ</div>
+        <div class="header-sub" id="status">Online • Always here for you 💙</div>
+      </div>
+      <div class="top-nav">
+        <button class="nav-btn" onclick="goVisit()">Visit Room</button>
+        <button class="nav-btn" onclick="goChoices()">Choices</button>
+      </div>
+    </header>
+
+    <main id="messages" class="messages" aria-live="polite" aria-label="Conversation"></main>
+
+    <footer class="chat-input">
+      <div class="tool-row" id="quickTags">
+        <button class="tag" onclick="setMood('happy')">😊 Happy</button>
+        <button class="tag" onclick="setMood('sad')">😢 Sad</button>
+        <button class="tag" onclick="setMood('angry')">😠 Angry</button>
+        <button class="tag" onclick="setMood('confused')">😕 Confused</button>
+        <button class="tag" onclick="setMood('hurt')">💔 Hurt</button>
+        <button class="tag" onclick="setMood('missing')">🥺 Missing</button>
+      </div>
+      <div class="input-row">
+        <input id="textbox" class="textbox" type="text" placeholder="Type a message..." autocomplete="off" />
+        <button id="sendBtn" class="send-btn" onclick="sendMessage()">Send</button>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const el = {
+      messages: document.getElementById('messages'),
+      textbox: document.getElementById('textbox'),
+      sendBtn: document.getElementById('sendBtn'),
+      status: document.getElementById('status')
+    };
+    let currentMood = null;
+
+    function goVisit(){ window.location.href = '/visit'; }
+    function goChoices(){ window.location.href = '/choices'; }
+
+    function setMood(m){
+      currentMood = m;
+      el.status.textContent = `Online • Mood set: ${m}`;
+    }
+
+    function appendMessage(text, who='you'){
+      const row = document.createElement('div');
+      row.className = `msg ${who==='you' ? 'you' : 'bot'}`;
+      const bubble = document.createElement('div');
+      bubble.className = `bubble ${who==='you' ? 'you' : 'bot'}`;
+      bubble.innerHTML = `${escapeHtml(text)}<div class="timestamp">${new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div>`;
+      row.appendChild(bubble);
+      el.messages.appendChild(row);
+      el.messages.scrollTop = el.messages.scrollHeight;
+    }
+
+    function appendTyping(){
+      const row = document.createElement('div');
+      row.className = 'msg bot';
+      row.id = 'typingRow';
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble bot';
+      bubble.textContent = 'Typing...';
+      row.appendChild(bubble);
+      el.messages.appendChild(row);
+      el.messages.scrollTop = el.messages.scrollHeight;
+    }
+
+    function removeTyping(){
+      const row = document.getElementById('typingRow');
+      if(row) row.remove();
+    }
+
+    async function sendMessage(){
+      const text = el.textbox.value.trim();
+      if(!text) return;
+      el.textbox.value = '';
+      el.textbox.focus();
+      el.sendBtn.disabled = true;
+
+      appendMessage(text, 'you');
+      appendTyping();
+
+      try{
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text, mood: currentMood })
+        });
+        const data = await res.json();
+        removeTyping();
+        appendMessage(data.response || '...');
+      } catch (e){
+        removeTyping();
+        appendMessage('Sorry, something went wrong. Please try again.');
+      } finally {
+        el.sendBtn.disabled = false;
+      }
+    }
+
+    el.textbox.addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter') sendMessage();
+    });
+
+    function escapeHtml(str){
+      return str.replace(/[&<>"]+/g, s=>({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'
+      })[s] || s);
+    }
+
+    // Greeting
+    appendMessage('Hi babe! How are you feeling today? 💙 I am here for you.');
+
+    // Auto-resume background music (shared logic)
+    (function(){
+      function resume(){
+        try{
+          const s = localStorage.getItem('bgm_song');
+          const p = localStorage.getItem('bgm_playing') === 'true';
+          const t = parseFloat(localStorage.getItem('bgm_time') || '0');
+          if (s && p && !window._bgm) {
+            const a = new Audio(`/me/music/${s}`);
+            a.loop = true;
+            a.addEventListener('loadedmetadata', ()=>{ if(!isNaN(t)){ try{ a.currentTime = t }catch(e){} } });
+            a.play().then(()=>{
+              window._bgm = a;
+              a.ontimeupdate = ()=>{ try{ localStorage.setItem('bgm_time', String(a.currentTime||0)) }catch(e){} };
+            }).catch(()=>{});
+          }
+        }catch(e){}
+      }
+      if (document.readyState === 'complete') resume(); else window.addEventListener('load', resume);
+    })();
+  </script>
+</body>
+</html>

@@ -65,6 +65,11 @@ def visit():
 def gallery():
     return render_template("gallery.html")
 
+# New chat route
+@app.route("/chat")
+def chat_page():
+    return render_template("chat.html")
+
 # Load responses from JSON file
 def load_responses():
     try:
