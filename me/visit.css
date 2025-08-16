@@ -674,6 +674,46 @@ body {
     border-top: 10px solid rgba(255, 255, 255, 0.95);
 }
 
+.lamp {
+    position: absolute;
+    /* Place beside EJ photo (EJ ~ left:45%, bottom:35%) */
+    left: 60%;
+    bottom: 35%;
+    width: 44px;
+    height: 210px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    z-index: 400; /* above furniture but under overlays */
+}
+
+.lamp .stand {
+    width: 7px;
+    height: 125px;
+    background: linear-gradient(#c9c9c9, #9e9e9e);
+    border-radius: 3px;
+}
+
+.lamp .base {
+    width: 80px;
+    height: 12px;
+    background: #8c8c8c;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+}
+
+.lamp .shade {
+    width: 92px;
+    height: 60px;
+    background: #f7e6a6; /* warm lampshade */
+    border: 2px solid rgba(0,0,0,0.15);
+    border-radius: 8px 8px 16px 16px;
+    box-shadow: 0 6px 18px rgba(255, 223, 128, 0.45), 0 0 0 2px rgba(255,255,255,0.6) inset;
+    transform: translateY(0);
+}
+
 /* Room Actions */
 .room-actions {
     position: absolute;
@@ -1071,6 +1111,11 @@ body {
         padding: 6px 10px;
         font-size: 0.7rem;
     }
+}
+
+@media (max-width: 600px) {
+    .lamp { left: 65%; bottom: 32%; width: 38px; height: 180px; }
+    .lamp .shade { width: 78px; height: 50px; }
 }
 
 @media (max-width: 480px) {
