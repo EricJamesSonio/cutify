@@ -77,7 +77,7 @@
     display: none;
     align-items: center;
     justify-content: center;
-    z-index: 2500; /* above toolbar and drawer */
+    z-index: 999999; /* absolute top over any room element */
     padding: 16px;
 }
 

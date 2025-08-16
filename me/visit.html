@@ -27,16 +27,7 @@
             <button class="toolbar-btn" onclick="goBack()" title="Back">↩️</button>
         </div>
 
-        <!-- Centered Popup Overlay -->
-        <div id="popupOverlay" class="popup-overlay" aria-hidden="true" onclick="overlayClick(event)">
-            <div class="popup" role="dialog" aria-modal="true" aria-labelledby="popupTitle">
-                <div class="popup-header">
-                    <h3 id="popupTitle">Actions</h3>
-                    <button class="popup-close" aria-label="Close" onclick="closePopup()">×</button>
-                </div>
-                <div id="popupContent" class="popup-content"></div>
-            </div>
-        </div>
+        
 
                 <div class="curtains">
                     <div class="curtain-left"></div>
@@ -178,6 +169,17 @@
         </div>
 
         
+    </div>
+
+    <!-- Centered Popup Overlay (outside room container to avoid stacking/perspective issues) -->
+    <div id="popupOverlay" class="popup-overlay" aria-hidden="true" onclick="overlayClick(event)">
+        <div class="popup" role="dialog" aria-modal="true" aria-labelledby="popupTitle">
+            <div class="popup-header">
+                <h3 id="popupTitle">Actions</h3>
+                <button class="popup-close" aria-label="Close" onclick="closePopup()">×</button>
+            </div>
+            <div id="popupContent" class="popup-content"></div>
+        </div>
     </div>
 
     <script>
