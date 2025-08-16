@@ -70,6 +70,32 @@
 }
 
 /* Centered Popup Overlay */
+.night-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.38); /* stronger nighty dark */
+    display: none;
+    pointer-events: none; /* allow interaction with room elements */
+    z-index: 300; /* well below popup overlay (999999) */
+    transition: opacity 0.25s ease;
+}
+
+body.night-on .night-overlay {
+    display: block;
+    opacity: 1;
+}
+
+/* Also dim the room background so night mode is obvious even if overlay is behind something */
+body.night-on .room-background {
+    filter: brightness(0.72) contrast(0.98);
+    transition: filter 0.25s ease;
+}
+
+/* Fallback: dim the entire room container too, to ensure all child layers appear darker */
+body.night-on .room-container {
+    filter: brightness(0.85);
+}
+
 .popup-overlay {
     position: fixed;
     inset: 0;
@@ -1114,7 +1140,8 @@ body {
 }
 
 @media (max-width: 600px) {
-    .lamp { left: 65%; bottom: 32%; width: 38px; height: 180px; }
+    /* Place lamp to the right of the EJ photo in mobile view */
+    .lamp { left: 72%; bottom: 46%; width: 38px; height: 180px; }
     .lamp .shade { width: 78px; height: 50px; }
 }
 
