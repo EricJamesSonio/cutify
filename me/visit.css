@@ -73,7 +73,7 @@
 .night-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.38); /* stronger nighty dark */
+    background: rgba(0, 0, 0, 0.28); /* lighter night effect */
     display: none;
     pointer-events: none; /* allow interaction with room elements */
     z-index: 300; /* well below popup overlay (999999) */
@@ -86,15 +86,7 @@ body.night-on .night-overlay {
 }
 
 /* Also dim the room background so night mode is obvious even if overlay is behind something */
-body.night-on .room-background {
-    filter: brightness(0.72) contrast(0.98);
-    transition: filter 0.25s ease;
-}
-
-/* Fallback: dim the entire room container too, to ensure all child layers appear darker */
-body.night-on .room-container {
-    filter: brightness(0.85);
-}
+/* Remove extra dimming filters to restore original look */
 
 .popup-overlay {
     position: fixed;
