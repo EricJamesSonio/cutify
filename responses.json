@@ -53,6 +53,11 @@
     "confused": "Confused ka baby? Explain ko sayo",
     "hurt": "Nasaktan ka ba love? Sorry naman",
     "fine": "Fine ka lang? Sure ka jan?",
+    "hi": "Hello Love",
+    "hello": "Hi Love",
+    "nyenye" : "Luh, Sungit monaman beh",
+    "Ano" : "Wala naman beh",
+    "ej" : "Bakit Ryza?",
     "good": "Good naman pala! Happy ako",
     "work": "Work nanaman? Take care ka jan love",
     "eat": "Kumain kana ba? Wag mo kalimutan ha"
@@ -146,7 +151,7 @@
   },
   "default": [
     "Hi Babe! How are you? what brings you here",
-    "Ano yan love? Tell me more",
+    "Ano yan love? Tell me po",
     "I'm here for you always baby",
     "What's on your mind love?",
     "Kwento mo sakin baby"
