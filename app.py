@@ -22,7 +22,7 @@ def home():
 
 @app.route("/choices")
 def choices():
-    return render_template("choices.html")
+    return render_template("choices_fixed.html")
 
 @app.route("/sadpage")
 def sad():
