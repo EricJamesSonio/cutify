@@ -114,9 +114,9 @@
                 <h3>Play Music</h3>
                 <p>Choose a song to play</p>
                 <div class="music-options">
-                    <button class="music-btn" onclick="playMusic('sofiathefirst.mp3')">Sofia the First</button>
-                    <button class="music-btn" onclick="playMusic('purplebarbie.mp3')">Purple Barbie</button>
-                    <button class="music-btn" onclick="playMusic('givemeyourforever.mp3')">Our Song 💙</button>
+                    <button class="music-btn" onclick="playMusic('sofiathefirst.mp3.mp3')">Sofia the First</button>
+                    <button class="music-btn" onclick="playMusic('purplebarbie.mp3.mp3')">Purple Barbie</button>
+                    <button class="music-btn" onclick="playMusic('givemeyourforever.mp3.mp3')">Our Song 💙</button>
                 </div>
                 <button class="action-btn stop-music" onclick="stopMusic()" style="display: none;">Stop Music</button>
             </div>
@@ -237,15 +237,19 @@
         }
 
         function getSongDisplayName(songFile) {
-            switch (songFile) {
-                case 'sofiathefirst.mp3':
+            const base = songFile.replace(/\.(mp3)(\.mp3)?$/i, '')
+                                 .replace(/\/+/g, '/')
+                                 .split('/')
+                                 .pop();
+            switch (base) {
+                case 'sofiathefirst':
                     return 'Sofia the First';
-                case 'purplebarbie.mp3':
+                case 'purplebarbie':
                     return 'Purple Barbie';
-                case 'givemeyourforever.mp3':
+                case 'givemeyourforever':
                     return 'Our Song 💙';
                 default:
-                    return 'Unknown Song';
+                    return base;
             }
         }
 
