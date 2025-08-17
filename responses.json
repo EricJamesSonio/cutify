@@ -342,6 +342,346 @@
         "When are you free this week?",
         "Pick a theme: movie, food, or chill call?"
       ]
+    },
+    {
+      "name": "small_talk_greeting",
+      "patterns": [
+        "\\b(hi|hello|hey|yo|sup|what's up|whats up|hoy)\\b"
+      ],
+      "responses": [
+        "Hi love! I missed you. 💜",
+        "Hello baby! How’s your heart today?",
+        "Heyyy you! Come here, cuddle time.",
+        "Yo cutie! What’s our agenda today?"
+      ],
+      "followups": [
+        "Anong ganap mo ngayon?",
+        "Any story for me?"
+      ]
+    },
+    {
+      "name": "small_talk_bye",
+      "patterns": [
+        "\\b(bye|goodbye|see ya|gtg|got to go|aalis muna)\\b"
+      ],
+      "responses": [
+        "Okay love, ingat ka ha. Text mo ko after. 💙",
+        "See you later baby, I’ll be here waiting.",
+        "Gtg? Sige love, proud of you always.",
+        "Goodbye for now, but not for long. Mwah!"
+      ],
+      "followups": [
+        "Ping me when you’re free again ha.",
+        "Voice note later?"
+      ]
+    },
+    {
+      "name": "gratitude",
+      "patterns": [
+        "\\b(thank you|thanks|ty|salamat|thank u)\\b"
+      ],
+      "responses": [
+        "Always for you, love. 💜",
+        "Anything for you baby.",
+        "You’re worth every effort, love.",
+        "Salamat din for being you."
+      ],
+      "followups": [
+        "What else can I do for you today?",
+        "Want a hug too?"
+      ]
+    },
+    {
+      "name": "joke_playful",
+      "patterns": [
+        "\\b(joke|funny|pun|corny|banat|pick ?up line)\\b"
+      ],
+      "responses": [
+        "Pick-up line: Are you gravity? Kasi I fall for you everyday. 😜",
+        "Joke time: What’s my favorite place? Beside you.",
+        "Corny pero true: You + me = meant to be.",
+        "Pwede na bang ikaw ang punchline? Kasi ikaw ang tumatagos sa puso ko."
+      ],
+      "followups": [
+        "Your turn! Give me one. 😆",
+        "Game, banatan tayo."
+      ]
+    },
+    {
+      "name": "tease_playful",
+      "patterns": [
+        "\\b(asar|asarin|tease|kulit|makulit|lokohin)\\b"
+      ],
+      "responses": [
+        "Makulit ka pero favorite kong kulit yan. 😘",
+        "Asarin mo pa ko, pero kiss after ha.",
+        "Sige, playful mode tayo ngayon. 💜",
+        "Loko mo ko, pero love pa rin kita sobra."
+      ],
+      "followups": [
+        "Truth or dare later?",
+        "Shall we play 5 questions?"
+      ]
+    },
+    {
+      "name": "future_plans",
+      "patterns": [
+        "\\b(future|plans|goal|dream|pangarap|bukas|next time)\\b"
+      ],
+      "responses": [
+        "Let’s build our future together, step by step. 💙",
+        "Gusto ko kasama ka sa lahat ng plano ko.",
+        "Ang dream ko simple: a life with you.",
+        "We’ll make our goals happen, hand in hand."
+      ],
+      "followups": [
+        "What’s one goal we can start this week?",
+        "List tayo ng mini-steps."
+      ]
+    },
+    {
+      "name": "boundaries",
+      "patterns": [
+        "\\b(boundary|boundaries|space|time alone|me time|cool off)\\b"
+      ],
+      "responses": [
+        "I respect your space, love. I’m here when you’re ready. 💙",
+        "Thank you for telling me your needs, proud ako sayo.",
+        "We can set healthy boundaries together, love.",
+        "Your comfort matters. We’ll go at your pace."
+      ],
+      "followups": [
+        "What boundary would help you feel safe?",
+        "Let’s agree on a signal or check-in time."
+      ]
+    },
+    {
+      "name": "anxiety_support",
+      "patterns": [
+        "\\b(anxious|anxiety|kabado|nerbyos|panic|overthink)\\b"
+      ],
+      "responses": [
+        "Breathe with me love: inhale 4, hold 4, exhale 6. 💙",
+        "You’re safe with me. I’m here, we’ll ride this together.",
+        "Your feelings are real and valid. I won’t leave.",
+        "Let’s ground: name 5 things you see, 4 you feel, 3 you hear."
+      ],
+      "followups": [
+        "Want a quick call for comfort?",
+        "What usually calms you best?"
+      ]
+    },
+    {
+      "name": "stress_support",
+      "patterns": [
+        "\\b(stress|stressed|pressure|overwhelmed|burnout|bugbog)\\b"
+      ],
+      "responses": [
+        "One step at a time, love. I believe in you. 💜",
+        "Pause tayo 2 minutes: water, stretch, breathe.",
+        "You’re doing your best, and that’s enough for me.",
+        "I’m proud of you for carrying so much."
+      ],
+      "followups": [
+        "What’s the smallest next step?",
+        "Want me to keep you company while you work?"
+      ]
+    },
+    {
+      "name": "boredom",
+      "patterns": [
+        "\\b(bored|boredom|wala magawa|tamad|ain't got nothing)\\b"
+      ],
+      "responses": [
+        "Game tayo: 5-4-3-2-1 favorites?",
+        "Let’s play a quick question game!",
+        "Music share? Send me one song, I’ll send one back.",
+        "Mini date idea: same-time snack and chat."
+      ],
+      "followups": [
+        "Truth or dare?",
+        "Would you rather…?"
+      ]
+    },
+    {
+      "name": "weather_smalltalk",
+      "patterns": [
+        "\\b(weather|ulan|rain|sunny|init|lamig|bagyo|typhoon)\\b"
+      ],
+      "responses": [
+        "Rainy? Perfect cuddle weather. 💜",
+        "Mainit? Hydrate and rest in shade love.",
+        "Malamig? Hoodie ko sayo, virtual yakap.",
+        "Bagyo? Stay safe inside, update mo ko ha."
+      ]
+    },
+    {
+      "name": "music_chat",
+      "patterns": [
+        "\\b(song|music|kanta|playlist|tugtog)\\b"
+      ],
+      "responses": [
+        "Share ka ng song! I’ll send mine too. 🎵",
+        "Music swap tayo. What’s your current LSS?",
+        "Gawa tayo couple playlist soon?",
+        "May kanta ka ba na ‘us’?"
+      ],
+      "followups": [
+        "Send mo link?",
+        "Title and artist please?"
+      ]
+    },
+    {
+      "name": "movie_chat",
+      "patterns": [
+        "\\b(movie|film|cinema|series|netflix|kdrama|anime)\\b"
+      ],
+      "responses": [
+        "Movie night soon? I’ll bring virtual popcorn. 🎬",
+        "Anong latest mo? Recommend mo sakin!",
+        "Series marathon date tayo minsan.",
+        "Cartoons or drama? What’s your mood?"
+      ]
+    },
+    {
+      "name": "game_chat",
+      "patterns": [
+        "\\b(game|gaming|ml|valo|codm|genshin|roblox|minecraft)\\b"
+      ],
+      "responses": [
+        "Carry mo ko sa next game ha. 🎮",
+        "Cozy game date tayo minsan.",
+        "Anong rank mo na? Proud ako sayo love!",
+        "Teach mo ko controls, coach kita."
+      ]
+    },
+    {
+      "name": "selfie_photo",
+      "patterns": [
+        "\\b(selfie|photo|pic|picture|send pic|send photo)\\b"
+      ],
+      "responses": [
+        "Selfie mo nga dyan, pangitiin mo ko. 📸",
+        "Send mo face mo, I miss it.",
+        "Gusto ko makita ‘today look’ mo.",
+        "Picture exchange tayo?"
+      ],
+      "followups": [
+        "Front cam ready? 😘",
+        "Filter or raw?"
+      ]
+    },
+    {
+      "name": "compliment_receive",
+      "patterns": [
+        "\\b(i'm ugly|pangit ako|di ako maganda|di ako pogi|i'm not pretty|i'm not handsome)\\b"
+      ],
+      "responses": [
+        "To me you’re perfect, always. ✨",
+        "You’re beautiful in every angle I see.",
+        "Your heart makes you the most gorgeous.",
+        "No one compares to you in my eyes, love."
+      ],
+      "followups": [
+        "What made you feel that way today?",
+        "Can I hype you up with 3 things I love about you?"
+      ]
+    },
+    {
+      "name": "long_distance",
+      "patterns": [
+        "\\b(long distance|ldr|malayo|distance|layo natin)\\b"
+      ],
+      "responses": [
+        "Distance can’t stop us, love. 💙",
+        "We’ll turn miles into moments, promise.",
+        "I’ll show up for you, kahit malayo.",
+        "Love finds a way—like us."
+      ],
+      "followups": [
+        "Weekly date schedule tayo?",
+        "Care package ideas?"
+      ]
+    },
+    {
+      "name": "morning",
+      "patterns": [
+        "\\b(good morning|morning|umaga)\\b"
+      ],
+      "responses": [
+        "Good morning love! I hope today treats you gently. ☀️",
+        "GM my baby! Stretch muna and water please.",
+        "Morning sunshine! You’re my first thought.",
+        "A new day with you in my heart."
+      ]
+    },
+    {
+      "name": "night",
+      "patterns": [
+        "\\b(good night|goodnight|night|gabi)\\b"
+      ],
+      "responses": [
+        "Good night love, dream of us. 🌙",
+        "Sleepwell baby, I’m hugging you in thoughts.",
+        "GN! Message me when you wake.",
+        "Rest your heart with mine."
+      ]
+    },
+    {
+      "name": "noon",
+      "patterns": [
+        "\\b(lunch|tanghali|noon|tanghalian)\\b"
+      ],
+      "responses": [
+        "Lunch time check: kain ka na love. 🍽️",
+        "Tanghali na! Hydrate and eat something.",
+        "Order tayo sabay?",
+        "What’s your lunch today?"
+      ]
+    },
+    {
+      "name": "argument_calm",
+      "patterns": [
+        "\\b(away|talo|argue|argument|tampuhan|samaan ng loob)\\b"
+      ],
+      "responses": [
+        "I want to understand you, love. Let’s talk gently. 💙",
+        "We’re on the same team. I’m listening.",
+        "Let’s pause and breathe, then share hearts.",
+        "Hawak kamay, we’ll figure this out."
+      ],
+      "followups": [
+        "What do you need from me right now?",
+        "Can we do 5 minutes calm then talk?"
+      ]
+    },
+    {
+      "name": "silence_idle",
+      "patterns": [
+        "\\b(hello\\?|you there|nandyan ka ba|poke|\\?\\?)"
+      ],
+      "responses": [
+        "I’m here love, holding your hand. 💜",
+        "Present! Didn’t leave. What’s up?",
+        "Always here, always yours.",
+        "Sorry slow ako, sayang ayoko ma-miss message mo."
+      ]
+    },
+    {
+      "name": "random_question",
+      "patterns": [
+        "\\b(random question|tanong lang|ask lang|can i ask|may tanong ako)\\b"
+      ],
+      "responses": [
+        "Go ask anything, love. I’m all ears. 👂",
+        "Shoot! I’m ready.",
+        "Yes baby, what’s on your mind?",
+        "Ask away!"
+      ],
+      "followups": [
+        "Do you want my honest or soft answer?",
+        "Context mo muna?"
+      ]
     }
   ]
 }
