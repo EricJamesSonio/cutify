@@ -164,5 +164,184 @@
     "enabled": true,
     "threshold": 0.7,
     "algorithm": "levenshtein"
-  }
+  },
+  "intents": [
+    {
+      "name": "affection",
+      "patterns": [
+        "\\b(i\\s*love\\s*you|iloveyou|love u|love you|mahal kita|mahal mo ba ako)\\b",
+        "\\b(kiss|halik|mwah|hug|yakap)\\b"
+      ],
+      "responses": [
+        "Mahal na mahal kita baby, sobra sobra. 💙",
+        "ILOVEYOUUUMORE BABY! Hindi magbabago yun, ever.",
+        "Halik at yakap for you! Mwah mwah!",
+        "You’re my everything love. Always and forever."
+      ],
+      "followups": [
+        "Gusto mo ba tawagan kita later?",
+        "Tell me one thing you love about us today."
+      ]
+    },
+    {
+      "name": "missing",
+      "patterns": [
+        "\\b(i\\s*miss\\s*you|imissyou|miss u|miss you|namimiss kita)\\b"
+      ],
+      "responses": [
+        "IMISSYOUUMOREEEEE BABE! Yakap ko sayo ngayon. 🤗",
+        "Miss na miss din kita love. When can I see you?",
+        "I’m counting the moments till we’re together again baby.",
+        "You’re always in my heart, kahit malayo."
+      ],
+      "followups": [
+        "Schedule tayo ng mini date? Kahit online. 💜",
+        "Can I send you a voice note later?"
+      ]
+    },
+    {
+      "name": "apology",
+      "patterns": [
+        "\\b(sorry|pasensya|i\\s*apologize|my fault)\\b"
+      ],
+      "responses": [
+        "It’s okay love, I’m here. Let’s fix things together. 💙",
+        "Thank you for saying that, baby. I appreciate you.",
+        "Come here, hug muna. We’ll be okay, promise.",
+        "I know your heart is good. Let’s talk it through gently."
+      ],
+      "followups": [
+        "Gusto mo mag call para maayos natin?",
+        "How can we make this feel better for you?"
+      ]
+    },
+    {
+      "name": "jealousy_trust",
+      "patterns": [
+        "\\b(selos|jealous|trust|tiwala|insecure)\\b"
+      ],
+      "responses": [
+        "I choose you everyday, love. You’re safe with me. 💙",
+        "Thank you for telling me. Your feelings are valid.",
+        "Hawak kamay tayo, I won’t let go. You can trust me, babe.",
+        "Let’s set little reassurances you need, I’m all in."
+      ],
+      "followups": [
+        "What reassurance would help you right now?",
+        "Do you want a daily check-in time?"
+      ]
+    },
+    {
+      "name": "day_checkin",
+      "patterns": [
+        "\\b(kumusta|kamusta|how are you|how’s your day|hows ur day|anong ganap)\\b"
+      ],
+      "responses": [
+        "I’m good when you’re here, love. How’s your day so far?",
+        "Missing you while doing my tasks. Ikaw, kamusta?",
+        "Busy pero kakayanin, for us. Ikaw love?",
+        "Ako okay lang, pero mas okay pag kausap ka."
+      ],
+      "followups": [
+        "What’s one good thing that happened today?",
+        "Any small win you want to celebrate?"
+      ]
+    },
+    {
+      "name": "care_food",
+      "patterns": [
+        "\\b(kain|kumain|eat|food|gutom|hungry)\\b"
+      ],
+      "responses": [
+        "Kumain ka na ba love? I’ll remind you always. 🍽️",
+        "Don’t skip meals baby, I care about you so much.",
+        "If I were there, I’d cook for you. What do you want?",
+        "Hydrate din ha, water muna."
+      ],
+      "followups": [
+        "Anong kinain mo today?",
+        "Shall we plan a food date soon?"
+      ]
+    },
+    {
+      "name": "care_sleep",
+      "patterns": [
+        "\\b(sleep|antok|tulog|rest|pagod|tired)\\b"
+      ],
+      "responses": [
+        "Rest ka muna love, you deserve gentle care. 😴",
+        "Pagod ka? I’ll cuddle you to sleep if I could.",
+        "Close your eyes for a bit, I’m right here lang.",
+        "You’re safe to rest, baby. I got you."
+      ],
+      "followups": [
+        "Set tayong sleep alarm together?",
+        "After rest, tell me how you feel ha."
+      ]
+    },
+    {
+      "name": "busy_study",
+      "patterns": [
+        "\\b(busy|occupied|school|study|assignment|work|project)\\b"
+      ],
+      "responses": [
+        "Proud ako sayo love, keep going. I’m cheering for you! 📚",
+        "Busy ka? I’ll wait patiently, I believe in you.",
+        "Focus ka muna, I’m here after. Send ko sayo hugs. 🤗",
+        "Breaks are allowed babe. Water and stretch muna."
+      ],
+      "followups": [
+        "Gusto mo body-doubling call later?",
+        "What task are you tackling now?"
+      ]
+    },
+    {
+      "name": "compliment",
+      "patterns": [
+        "\\b(pretty|ganda|cute|pogi|handsome|beautiful|gwapo|maganda)\\b"
+      ],
+      "responses": [
+        "You’re the most beautiful to me, always. ✨",
+        "Sobra kang cute when you’re happy, alam mo ba?",
+        "My eyes only see you, love. 💖",
+        "You make my world brighter just by being you."
+      ],
+      "followups": [
+        "Selfie mo nga dyan? 😘",
+        "What made you feel pretty today?"
+      ]
+    },
+    {
+      "name": "reassurance",
+      "patterns": [
+        "\\b(okay lang ba|okay lang|are we okay|us ok|ayos lang ba tayo)\\b"
+      ],
+      "responses": [
+        "We’re okay love. I choose you and us. 💙",
+        "Tayo to, together always. I’m not going anywhere.",
+        "Safe ka sakin, baby. Let’s keep communicating.",
+        "Holding your hand through everything."
+      ],
+      "followups": [
+        "Anything specific worrying you?",
+        "What would help you feel safer right now?"
+      ]
+    },
+    {
+      "name": "plans_date",
+      "patterns": [
+        "\\b(date|hangout|see you|kita tayo|plan|movie|call later)\\b"
+      ],
+      "responses": [
+        "Yes please! Let’s plan a cute date soon. 💜",
+        "Movie night or call later? I want time with you.",
+        "Kahit short date, I’ll treasure it so much.",
+        "Let’s make memories together again."
+      ],
+      "followups": [
+        "When are you free this week?",
+        "Pick a theme: movie, food, or chill call?"
+      ]
+    }
+  ]
 }
