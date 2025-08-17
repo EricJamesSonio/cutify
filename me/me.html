@@ -109,6 +109,7 @@
   </div>
 
   <script>
+    const IN_SHELL = (()=>{ try { return window.parent && window.parent !== window; } catch(e){ return false; } })();
     const albums = {
       firstdate: { name: "First Date - February 14", prefix: "g", icon: "💕" },
       walter: { name: "Walter Date", prefix: "f", icon: "🌟" },
@@ -233,10 +234,14 @@
         if (e.key === 'Escape') closeModal();
       }
     });
-    // Auto-resume background music on this page
+    // Auto-resume background music on this page (disabled when inside app shell to prevent overlap)
     (function(){
       function resume(){
         try{
+          if (IN_SHELL) {
+            if (window._bgm) { try{ window._bgm.pause(); }catch(e){}; window._bgm = null; }
+            return; // Shell owns the music
+          }
           const s = localStorage.getItem('bgm_song');
           const p = localStorage.getItem('bgm_playing') === 'true';
           const t = parseFloat(localStorage.getItem('bgm_time') || '0');

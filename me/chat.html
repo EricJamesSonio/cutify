@@ -42,6 +42,7 @@
   </div>
 
   <script>
+    const IN_SHELL = (()=>{ try { return window.parent && window.parent !== window; } catch(e){ return false; } })();
     const el = {
       messages: document.getElementById('messages'),
       textbox: document.getElementById('textbox'),
@@ -132,10 +133,14 @@
     // Greeting as bot (left side)
     appendMessage('Hi babe! How are you feeling today? 💙 I am here for you.', 'bot');
 
-    // Auto-resume background music (shared logic)
+    // Auto-resume background music (disabled when inside app shell to prevent overlap)
     (function(){
       function resume(){
         try{
+          if (IN_SHELL) {
+            if (window._bgm) { try{ window._bgm.pause(); }catch(e){}; window._bgm = null; }
+            return; // Shell owns the music
+          }
           const s = localStorage.getItem('bgm_song');
           const p = localStorage.getItem('bgm_playing') === 'true';
           const t = parseFloat(localStorage.getItem('bgm_time') || '0');
