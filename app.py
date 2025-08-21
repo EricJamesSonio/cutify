@@ -3,7 +3,7 @@ from flask_cors import CORS
 from jinja2 import ChoiceLoader, FileSystemLoader
 import json, random, os, re, difflib, unicodedata
 from typing import Optional, List, Tuple, Dict, Any
-
+import datetime
 # Serve static files from the root folder
 app = Flask(__name__, static_folder='.', static_url_path='')
 CORS(app)
@@ -228,6 +228,33 @@ def _pick_response(intent: Dict[str, Any]) -> Tuple[str, Optional[str]]:
     follow = random.choice(followups) if followups else None
     return choice, follow
 
+
+CHAT_LOG_FILE = 'chat_log.json'
+
+def save_chat(user_message: str, bot_response: str):
+    entry = {
+        "timestamp": datetime.datetime.utcnow().isoformat(),
+        "user": user_message,
+        "bot": bot_response
+    }
+
+    # Read existing logs
+    if os.path.exists(CHAT_LOG_FILE):
+        with open(CHAT_LOG_FILE, 'r', encoding='utf-8') as f:
+            try:
+                data = json.load(f)
+            except json.JSONDecodeError:
+                data = []
+    else:
+        data = []
+
+    # Append new chat entry
+    data.append(entry)
+
+    # Save back to file
+    with open(CHAT_LOG_FILE, 'w', encoding='utf-8') as f:
+        json.dump(data, f, indent=2, ensure_ascii=False)
+        
 @app.route('/api/chat', methods=['POST'])
 def chat():
     data = request.get_json() or {}
@@ -266,6 +293,8 @@ def chat():
                 response_text = random.choice(responses_data['default'])
         else:
             response_text = random.choice(responses_data['default'])
+            
+    save_chat(raw_message, response_text)
 
     return jsonify({'response': response_text, 'status': 'success'})
 
