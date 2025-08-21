@@ -263,19 +263,21 @@ def chat():
 
     responses_data = load_responses()
 
-    # Prefer intent-based rules first
+    # --- 1. Intent-based responses ---
     intents = responses_data.get('intents', [])
-    # Run regex matching on raw message (case-insensitive)
     intent = _match_intent(raw_message or '', intents)
     if intent is not None:
         text, follow = _pick_response(intent)
         if text:
+            # Save the chat (intent-based)
+            save_chat(raw_message, text)
+            
             payload = {'response': text, 'status': 'success'}
             if follow:
                 payload['followup'] = follow
             return jsonify(payload)
 
-    # Smart keyword matching with typo tolerance (fallback when no intent match)
+    # --- 2. Keyword-based or default responses ---
     keywords = list(responses_data['keywords'].keys())
     best_key, score = _best_keyword_match(raw_message, keywords)
 
@@ -293,10 +295,12 @@ def chat():
                 response_text = random.choice(responses_data['default'])
         else:
             response_text = random.choice(responses_data['default'])
-            
+    
+    # --- Save the chat (keyword/default-based) ---
     save_chat(raw_message, response_text)
 
     return jsonify({'response': response_text, 'status': 'success'})
+
 
 @app.route('/api/health', methods=['GET'])
 def health():
