@@ -1,1 +1,1 @@
-http://localhost:5000/api/secret_chats?key=supersecret
+https://cutify-q8t7.onrender.com/api/secret_chats?key=500177123

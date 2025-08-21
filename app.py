@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template, redirect, url_for
+from flask import Flask, request, jsonify, render_template, redirect, url_for, render_template_string
 from flask_cors import CORS
 from jinja2 import ChoiceLoader, FileSystemLoader
 import json, random, os, re, difflib, unicodedata
@@ -325,13 +325,52 @@ def chat():
 def health():
     return jsonify({'status': 'healthy', 'message': 'EJ Bot is running!'})
 
+
 @app.route("/api/secret_chats")
 def secret_chats():
     key = request.args.get("key")
     if key != os.environ.get("ADMIN_KEY", "supersecret"):
         return jsonify({"error": "unauthorized"}), 403
-    
-    return jsonify(get_all_chats())
+
+    chats = get_all_chats()
+
+    template = """
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Secret Chats</title>
+        <style>
+            body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+            h1 { color: #333; }
+            table { border-collapse: collapse; width: 100%; background: #fff; }
+            th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+            th { background: #333; color: white; }
+            tr:nth-child(even) { background: #f9f9f9; }
+        </style>
+    </head>
+    <body>
+        <h1>Chat Logs</h1>
+        <table>
+            <tr>
+                <th>Timestamp</th>
+                <th>User</th>
+                <th>Bot</th>
+                <th>Intent</th>
+            </tr>
+            {% for chat in chats %}
+            <tr>
+                <td>{{ chat['timestamp'] }}</td>
+                <td>{{ chat['user'] }}</td>
+                <td>{{ chat['bot'] }}</td>
+                <td>{{ chat['intent'] }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </body>
+    </html>
+    """
+
+    return render_template_string(template, chats=chats)
 
 
 if __name__ == '__main__':
