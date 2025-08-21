@@ -4,6 +4,30 @@ from jinja2 import ChoiceLoader, FileSystemLoader
 import json, random, os, re, difflib, unicodedata
 from typing import Optional, List, Tuple, Dict, Any
 import datetime
+import sqlite3
+
+# --- Chat log ---
+DB_FILE = os.path.join(os.getcwd(), 'chat_log.db')
+
+def init_db():
+    conn = sqlite3.connect(DB_FILE)
+    c = conn.cursor()
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS chats (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            timestamp TEXT NOT NULL,
+            user TEXT NOT NULL,
+            bot TEXT NOT NULL,
+            intent TEXT
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+# Initialize DB at startup
+init_db()
+
+
 # Serve static files from the root folder
 app = Flask(__name__, static_folder='.', static_url_path='')
 CORS(app)
@@ -230,27 +254,32 @@ def _pick_response(intent: Dict[str, Any]) -> Tuple[str, Optional[str]]:
 
 
 
-# --- Chat log ---
-CHAT_LOG_FILE = os.path.join(os.getcwd(), 'chat_log.json')
+
 
 def save_chat(user_message: str, bot_response: str, intent_name: str = None):
-    entry = {"timestamp": datetime.datetime.utcnow().isoformat(),
-             "user": user_message, "bot": bot_response}
-    if intent_name: entry["intent"] = intent_name
     try:
-        if os.path.exists(CHAT_LOG_FILE):
-            with open(CHAT_LOG_FILE, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-        else:
-            data = []
-    except (json.JSONDecodeError, FileNotFoundError):
-        data = []
-    data.append(entry)
-    try:
-        with open(CHAT_LOG_FILE, 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
+        conn = sqlite3.connect(DB_FILE)
+        c = conn.cursor()
+        c.execute('''
+            INSERT INTO chats (timestamp, user, bot, intent)
+            VALUES (?, ?, ?, ?)
+        ''', (datetime.datetime.utcnow().isoformat(), user_message, bot_response, intent_name))
+        conn.commit()
+        conn.close()
     except Exception as e:
         print("Failed to save chat:", e)
+        
+def get_last_chats(limit: int = 50):
+    conn = sqlite3.connect(DB_FILE)
+    c = conn.cursor()
+    c.execute('''
+        SELECT timestamp, user, bot, intent FROM chats
+        ORDER BY id DESC LIMIT ?
+    ''', (limit,))
+    rows = c.fetchall()
+    conn.close()
+    return rows
+
 
 
 # --- Chat API ---
