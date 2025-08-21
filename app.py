@@ -229,72 +229,60 @@ def _pick_response(intent: Dict[str, Any]) -> Tuple[str, Optional[str]]:
     return choice, follow
 
 
-CHAT_LOG_FILE = 'chat_log.json'
+
+# --- Chat log ---
+CHAT_LOG_FILE = os.path.join(os.getcwd(), 'chat_log.json')
 
 def save_chat(user_message: str, bot_response: str, intent_name: str = None):
-    entry = {
-        "timestamp": datetime.datetime.utcnow().isoformat(),
-        "user": user_message,
-        "bot": bot_response
-    }
-    if intent_name:
-        entry["intent"] = intent_name
-
-    # Load existing chat log
-    if os.path.exists(CHAT_LOG_FILE):
-        with open(CHAT_LOG_FILE, 'r', encoding='utf-8') as f:
-            try:
+    entry = {"timestamp": datetime.datetime.utcnow().isoformat(),
+             "user": user_message, "bot": bot_response}
+    if intent_name: entry["intent"] = intent_name
+    try:
+        if os.path.exists(CHAT_LOG_FILE):
+            with open(CHAT_LOG_FILE, 'r', encoding='utf-8') as f:
                 data = json.load(f)
-            except json.JSONDecodeError:
-                data = []
-    else:
+        else:
+            data = []
+    except (json.JSONDecodeError, FileNotFoundError):
         data = []
-
-    # Append and save
     data.append(entry)
-    with open(CHAT_LOG_FILE, 'w', encoding='utf-8') as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
+    try:
+        with open(CHAT_LOG_FILE, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+    except Exception as e:
+        print("Failed to save chat:", e)
 
 
+# --- Chat API ---
 @app.route('/api/chat', methods=['POST'])
 def chat():
     data = request.get_json() or {}
     user_message = data.get('message', '')
-    mood = data.get('mood', None)
-
+    mood = data.get('mood')
     responses_data = load_responses()
 
-    # --- 1. Try intent-based response ---
-    intents = responses_data.get('intents', [])
-    intent = _match_intent(user_message, intents)
+    # 1. Intent-based
+    intent = _match_intent(user_message, responses_data.get('intents', []))
     if intent:
         bot_response, followup = _pick_response(intent)
-        if bot_response:
-            save_chat(user_message, bot_response, intent_name=intent.get('name'))
-            payload = {'response': bot_response, 'status': 'success'}
-            if followup:
-                payload['followup'] = followup
-            return jsonify(payload)
+        save_chat(user_message, bot_response, intent_name=intent.get('name'))
+        payload = {'response': bot_response, 'status': 'success'}
+        if followup: payload['followup'] = followup
+        return jsonify(payload)
 
-    # --- 2. Try keyword-based response ---
+    # 2. Keyword-based
     keywords = list(responses_data.get('keywords', {}).keys())
     best_key, score = _best_keyword_match(user_message, keywords)
     if best_key and score >= 0.82:
         bot_response = random.choice(responses_data['keywords'][best_key])
     else:
-        # --- 3. Mood or default fallback ---
-        if mood and isinstance(responses_data.get('moodResponses'), dict):
-            mood_block = responses_data['moodResponses'].get(mood)
-            if mood_block and mood_block.get('responses'):
-                bot_response = random.choice(mood_block['responses'])
-            else:
-                bot_response = random.choice(responses_data['default'])
-        else:
-            bot_response = random.choice(responses_data['default'])
+        # 3. Mood/default fallback
+        mood_responses = responses_data.get('moodResponses', {}).get(mood) if mood else None
+        bot_response = (random.choice(mood_responses['responses']) if mood_responses else
+                        random.choice(responses_data['default']))
 
     save_chat(user_message, bot_response)
     return jsonify({'response': bot_response, 'status': 'success'})
-
 
 
 @app.route('/api/health', methods=['GET'])
