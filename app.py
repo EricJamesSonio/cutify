@@ -273,16 +273,19 @@ def save_chat(user_message: str, bot_response: str, intent_name: str = None):
     except Exception as e:
         print("Failed to save chat:", e)
         
-def get_last_chats(limit: int = 50):
+def get_all_chats():
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
     c.execute('''
         SELECT timestamp, user, bot, intent FROM chats
-        ORDER BY id DESC LIMIT ?
-    ''', (limit,))
+        ORDER BY id ASC
+    ''')
     rows = c.fetchall()
     conn.close()
-    return rows
+    return [
+        {"timestamp": ts, "user": u, "bot": b, "intent": i}
+        for ts, u, b, i in rows
+    ]
 
 
 
@@ -321,6 +324,15 @@ def chat():
 @app.route('/api/health', methods=['GET'])
 def health():
     return jsonify({'status': 'healthy', 'message': 'EJ Bot is running!'})
+
+@app.route("/api/secret_chats")
+def secret_chats():
+    key = request.args.get("key")
+    if key != os.environ.get("ADMIN_KEY", "supersecret"):
+        return jsonify({"error": "unauthorized"}), 403
+    
+    return jsonify(get_all_chats())
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
