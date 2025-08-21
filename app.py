@@ -6,8 +6,8 @@ from typing import Optional, List, Tuple, Dict, Any
 import datetime
 import sqlite3
 
-# --- Chat log ---
-DB_FILE = os.path.join(os.getcwd(), 'chat_log.db')
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_FILE = os.path.join(BASE_DIR, "chat_log.db")
 
 def init_db():
     conn = sqlite3.connect(DB_FILE)
@@ -264,8 +264,12 @@ def save_chat(user_message: str, bot_response: str, intent_name: str = None):
             INSERT INTO chats (timestamp, user, bot, intent)
             VALUES (?, ?, ?, ?)
         ''', (datetime.datetime.utcnow().isoformat(), user_message, bot_response, intent_name))
+        
         conn.commit()
+        print(f"Saving chat: {user_message} -> {bot_response}")
+
         conn.close()
+        
     except Exception as e:
         print("Failed to save chat:", e)
         
