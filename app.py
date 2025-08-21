@@ -231,14 +231,16 @@ def _pick_response(intent: Dict[str, Any]) -> Tuple[str, Optional[str]]:
 
 CHAT_LOG_FILE = 'chat_log.json'
 
-def save_chat(user_message: str, bot_response: str):
+def save_chat(user_message: str, bot_response: str, intent_name: str = None):
     entry = {
         "timestamp": datetime.datetime.utcnow().isoformat(),
         "user": user_message,
         "bot": bot_response
     }
+    if intent_name:
+        entry["intent"] = intent_name
 
-    # Read existing logs
+    # Load existing chat log
     if os.path.exists(CHAT_LOG_FILE):
         with open(CHAT_LOG_FILE, 'r', encoding='utf-8') as f:
             try:
@@ -248,58 +250,51 @@ def save_chat(user_message: str, bot_response: str):
     else:
         data = []
 
-    # Append new chat entry
+    # Append and save
     data.append(entry)
-
-    # Save back to file
     with open(CHAT_LOG_FILE, 'w', encoding='utf-8') as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
-        
+
+
 @app.route('/api/chat', methods=['POST'])
 def chat():
     data = request.get_json() or {}
-    raw_message = data.get('message', '')
+    user_message = data.get('message', '')
     mood = data.get('mood', None)
 
     responses_data = load_responses()
 
-    # --- 1. Intent-based responses ---
+    # --- 1. Try intent-based response ---
     intents = responses_data.get('intents', [])
-    intent = _match_intent(raw_message or '', intents)
-    if intent is not None:
-        text, follow = _pick_response(intent)
-        if text:
-            # Save the chat (intent-based)
-            save_chat(raw_message, text)
-            
-            payload = {'response': text, 'status': 'success'}
-            if follow:
-                payload['followup'] = follow
+    intent = _match_intent(user_message, intents)
+    if intent:
+        bot_response, followup = _pick_response(intent)
+        if bot_response:
+            save_chat(user_message, bot_response, intent_name=intent.get('name'))
+            payload = {'response': bot_response, 'status': 'success'}
+            if followup:
+                payload['followup'] = followup
             return jsonify(payload)
 
-    # --- 2. Keyword-based or default responses ---
-    keywords = list(responses_data['keywords'].keys())
-    best_key, score = _best_keyword_match(raw_message, keywords)
-
-    # Thresholds: exact/substring -> 1.0, fuzzy accept >= 0.82
-    if best_key is not None and score >= 0.82:
-        responses = responses_data['keywords'][best_key]
-        response_text = random.choice(responses)
+    # --- 2. Try keyword-based response ---
+    keywords = list(responses_data.get('keywords', {}).keys())
+    best_key, score = _best_keyword_match(user_message, keywords)
+    if best_key and score >= 0.82:
+        bot_response = random.choice(responses_data['keywords'][best_key])
     else:
-        # If mood available, try moodResponses, else default lines
+        # --- 3. Mood or default fallback ---
         if mood and isinstance(responses_data.get('moodResponses'), dict):
             mood_block = responses_data['moodResponses'].get(mood)
             if mood_block and mood_block.get('responses'):
-                response_text = random.choice(mood_block['responses'])
+                bot_response = random.choice(mood_block['responses'])
             else:
-                response_text = random.choice(responses_data['default'])
+                bot_response = random.choice(responses_data['default'])
         else:
-            response_text = random.choice(responses_data['default'])
-    
-    # --- Save the chat (keyword/default-based) ---
-    save_chat(raw_message, response_text)
+            bot_response = random.choice(responses_data['default'])
 
-    return jsonify({'response': response_text, 'status': 'success'})
+    save_chat(user_message, bot_response)
+    return jsonify({'response': bot_response, 'status': 'success'})
+
 
 
 @app.route('/api/health', methods=['GET'])
